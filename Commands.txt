@@ -1,0 +1,12 @@
+https://localhost:44339/api/login/username   
+
+If player exists - returns his ID, else - returns -1
+_____________________________________________________________________________________________________
+https://localhost:44339/api/creategame/PlayerId 
+
+Adds player to the wait list, if there is another player in waitlist - creates game with those two.
+returns GameID
+_______________________________________________________________________________________
+https://localhost:44339/api/waitforgame/gameID 
+
+Eeturns true if game is ready to play
