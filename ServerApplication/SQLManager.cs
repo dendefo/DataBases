@@ -149,7 +149,7 @@ namespace ServerApplication
             Connection.Open();
 
             var com = Connection.CreateCommand();
-            com.CommandText = $"SELECT * FROM questions WHERE QuestionID = (SELECT IF( CurrentQuestionNumber = 0,FirstQuestionID,IF(CurrentQuestionNumber = 1,SecondQuestionID,IF(CurrentQuestionNumber = 2,ThirdQuestionID,IF(CurrentQuestionNumber = 3,ForthQuestionID,FifthQuestionID))))FROM currentgames WHERE GameID = 1;";
+            com.CommandText = $"SELECT * FROM questions WHERE QuestionID = (SELECT IF( CurrentQuestionNumber = 0,FirstQuestionID,IF(CurrentQuestionNumber = 1,SecondQuestionID,IF(CurrentQuestionNumber = 2,ThirdQuestionID,IF(CurrentQuestionNumber = 3,ForthQuestionID,FifthQuestionID))))FROM currentgames WHERE GameID = '1';";
             Question question = new Question(com.ExecuteReader());
 
             Connection.Close();
