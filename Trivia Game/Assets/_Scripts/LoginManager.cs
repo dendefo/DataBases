@@ -9,6 +9,7 @@ public class LoginManager : MonoBehaviour
     [SerializeField] TMP_InputField userNameInput;
     [SerializeField] TMP_Text errorText;
     [SerializeField] GameObject newUserPopup;
+    [SerializeField] GameObject mainMenu;
     void Start()
     {
         
@@ -41,14 +42,48 @@ public class LoginManager : MonoBehaviour
             }
             else
             {
-                errorText.gameObject.SetActive(true);
-                errorText.text = "UserID = " + userID;
+                OpenMainMenu(userID);
             }
         }
+    }
+    IEnumerator Register(string username)
+    {
+        UnityWebRequest www = UnityWebRequest.Get("https://localhost:44339/api/Register?username=" + username);
+        yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            errorText.gameObject.SetActive(true);
+            errorText.text = "Failed To Connect Server";
+        }
+        else
+        {
+            int userID = int.Parse(www.downloadHandler.text);
+            if (userID == -1)
+            {
+                newUserPopup.SetActive(false);
+                errorText.gameObject.SetActive(true);
+                errorText.text = "Failed To Connect Server";
+            }
+            else
+            {
+                OpenMainMenu(userID);
+            }
+        }
+    }
+    public void RegisterNewUser()
+    {
+        StartCoroutine(Register(userNameInput.text));
     }
     public void CloseNewUserPopup()
     {
         newUserPopup.SetActive(false);
+    }
+    void OpenMainMenu(int userID)
+    {
+        MenuManager.UserID = userID;
+        gameObject.SetActive(false);
+        mainMenu.SetActive(true);
     }
     bool CheckUsername(string username)
     {

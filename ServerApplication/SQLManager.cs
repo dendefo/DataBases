@@ -156,6 +156,19 @@ namespace ServerApplication
             Connection.Close();
             return false;
         }
+        public string GetUsername(int userId)
+        {
+            Connection.Open();
+
+            var com = Connection.CreateCommand();
+            com.CommandText = $"SELECT PlayerName FROM players WHERE PlayerID = {userId}";
+            var read = com.ExecuteReader();
+            read.Read();
+            string username = read.GetString("PlayerName");
+            Connection.Close();
+            return username;
+
+        }
 
         public Question GetQuestion(int questionId)
         {
