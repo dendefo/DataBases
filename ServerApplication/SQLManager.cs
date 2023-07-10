@@ -42,6 +42,7 @@ namespace ServerApplication
             Connection.Open();
             com = Connection.CreateCommand();
             com.CommandText = $"INSERT INTO players (PlayerName) VALUES ('{username}');";
+            com.ExecuteNonQuery();
             Connection.Close();
             return Login(username);
         }
