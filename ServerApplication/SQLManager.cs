@@ -143,5 +143,47 @@ namespace ServerApplication
             Connection.Close();
             return false;
         }
+
+        public Question GetQuestion(int questionId)
+        {
+            Connection.Open();
+
+            var com = Connection.CreateCommand();
+            com.CommandText = $"SELECT * FROM questions WHERE QuestionID = (SELECT IF( CurrentQuestionNumber = 0,FirstQuestionID,IF(CurrentQuestionNumber = 1,SecondQuestionID,IF(CurrentQuestionNumber = 2,ThirdQuestionID,IF(CurrentQuestionNumber = 3,ForthQuestionID,FifthQuestionID))))FROM currentgames WHERE GameID = 1;";
+            Question question = new Question(com.ExecuteReader());
+
+            Connection.Close();
+            return question;
+        }
+    }
+
+    public struct Question
+    {
+        public int QuestionId;
+        public string QuestionText;
+        public string[] Answers;
+        public int CorrectAnswerIndex;
+
+        public Question(MySqlDataReader reader)
+        {
+            if (reader.Read())
+            {
+                QuestionId = reader.GetInt32(0);
+                QuestionText = reader.GetString(1);
+                CorrectAnswerIndex = reader.GetInt32(2);
+                Answers = new string[4];
+                for (int i = 0; i < 4; i++)
+                {
+                    Answers[i] = reader.GetString(i + 3);
+                }
+            }
+            else
+            {
+                QuestionId = 0;
+                QuestionText = "";
+                CorrectAnswerIndex= 0;
+                Answers= new string[0];
+            }
+        }
     }
 }

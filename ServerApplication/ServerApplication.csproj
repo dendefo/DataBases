@@ -195,6 +195,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\CreateGameController.cs" />
+    <Compile Include="Controllers\GetQuestionController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\WaitForGameController.cs" />
     <Compile Include="SQLString.cs" />
