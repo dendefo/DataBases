@@ -18,33 +18,33 @@ USE `triviagame`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `players`
+-- Table structure for table `questions`
 --
 
-DROP TABLE IF EXISTS `players`;
+DROP TABLE IF EXISTS `questions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `players` (
-  `PlayerID` int NOT NULL AUTO_INCREMENT,
-  `PlayerName` varchar(45) NOT NULL,
-  `Games` int DEFAULT '0',
-  `Wons` int DEFAULT '0',
-  `Loses` int DEFAULT '0',
-  `IsConnected` tinyint DEFAULT '0',
-  PRIMARY KEY (`PlayerID`),
-  UNIQUE KEY `PlayerID_UNIQUE` (`PlayerID`),
-  UNIQUE KEY `PlayerName_UNIQUE` (`PlayerName`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `questions` (
+  `QuestionId` int NOT NULL AUTO_INCREMENT,
+  `QuestionText` varchar(75) NOT NULL,
+  `RightAnswerNumber` int NOT NULL,
+  `FirstAnswer` varchar(60) NOT NULL,
+  `SecondAnswer` varchar(60) NOT NULL,
+  `ThirdAnswer` varchar(60) NOT NULL,
+  `ForthAnswer` varchar(60) NOT NULL,
+  PRIMARY KEY (`QuestionId`),
+  UNIQUE KEY `QuestionId_UNIQUE` (`QuestionId`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `players`
+-- Dumping data for table `questions`
 --
 
-LOCK TABLES `players` WRITE;
-/*!40000 ALTER TABLE `players` DISABLE KEYS */;
-INSERT INTO `players` VALUES (1,'Dendefo',0,0,0,0),(2,'Lol',1,1,1,0);
-/*!40000 ALTER TABLE `players` ENABLE KEYS */;
+LOCK TABLES `questions` WRITE;
+/*!40000 ALTER TABLE `questions` DISABLE KEYS */;
+INSERT INTO `questions` VALUES (1,'What is Love?',2,'Baby don\'t hurt me','I don\'t know:(','Chemical Reaction','Check \"Love is...\" gum');
+/*!40000 ALTER TABLE `questions` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -56,4 +56,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-10 14:57:48
+-- Dump completed on 2023-07-10 16:03:27
