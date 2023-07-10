@@ -11,10 +11,11 @@ namespace ServerApplication.Controllers
     public class CreateGameController : ApiController
     {
         // GET: api/creategame/id
-        public void Get(int id)
+        public int Get(int id)
         {
             SQLManager sqlManager = new SQLManager();
             int gameID = sqlManager.ConnectToGame(id);
+            return gameID;
         }
     }
 }

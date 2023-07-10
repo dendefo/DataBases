@@ -9,19 +9,18 @@ namespace ServerApplication
 {
     public class SQLManager
     {
-        const string CONNECTION_STRING = "server = 127.0.0.1; uid = root; pwd = 12345; database = triviagame";
         static MySqlConnection Connection;
 
         public SQLManager()
         {
-            if (Connection == null) Connection = new MySqlConnection(CONNECTION_STRING);
+            if (Connection == null) Connection = new MySqlConnection(SQLString.CONNECTION_STRING);
         }
 
         public int Login(string login)
         {
             Connection.Open();
             var com = Connection.CreateCommand();
-            com.CommandText = $"SELECT * FROM Players WHERE PlayerName = '{login}'";
+            com.CommandText = $"SELECT * FROM Players WHERE PlayerName = '{login}'"; //Add additional check for IS PLAYER CONNECTED
             var reader = com.ExecuteReader();
             int count = 0;
             int id = -1;
@@ -31,7 +30,7 @@ namespace ServerApplication
                 count++;
             }
             Connection.Close();
-            if (count == 1) return id;
+            if (count == 1) return id; //MAKE PLAYER CONNECTED
             else return -1;
         }
         public int ConnectToGame(int id)
