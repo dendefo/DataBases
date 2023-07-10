@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Web;
 using System.Web.UI.WebControls;
+using Microsoft.Ajax.Utilities;
 using MySql.Data.MySqlClient;
 
 namespace ServerApplication
@@ -32,6 +34,16 @@ namespace ServerApplication
             Connection.Close();
             if (count == 1) return id; //MAKE PLAYER CONNECTED
             else return -1;
+        }
+        public int Register(string username)
+        {
+            
+            var com = Connection.CreateCommand();
+            Connection.Open();
+            com = Connection.CreateCommand();
+            com.CommandText = $"INSERT INTO players (PlayerName) VALUES ('{username}');";
+            Connection.Close();
+            return Login(username);
         }
         public int ConnectToGame(int id)
         {

@@ -198,6 +198,7 @@
     <Compile Include="Controllers\GetQuestionController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\WaitForGameController.cs" />
+    <Compile Include="Controllers\RegisterController.cs" />
     <Compile Include="SQLString.cs" />
     <Compile Include="SQLManager.cs" />
     <Compile Include="Controllers\HomeController.cs" />
