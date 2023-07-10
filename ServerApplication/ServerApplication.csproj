@@ -197,6 +197,7 @@
     <Compile Include="Controllers\CreateGameController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\WaitForGameController.cs" />
+    <Compile Include="SQLString.cs" />
     <Compile Include="SQLManager.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
