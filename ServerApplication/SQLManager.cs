@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.UI.WebControls;
 using Microsoft.Ajax.Utilities;
 using MySql.Data.MySqlClient;
+using Org.BouncyCastle.Crypto.Prng;
 
 namespace ServerApplication
 {
@@ -37,7 +38,7 @@ namespace ServerApplication
         }
         public int Register(string username)
         {
-            
+
             var com = Connection.CreateCommand();
             Connection.Open();
             com = Connection.CreateCommand();
@@ -87,7 +88,7 @@ namespace ServerApplication
             Connection.Close();
 
         }
-        public int CreateGame(int firstPlayer, int secondPlayer,int gameID)
+        public int CreateGame(int firstPlayer, int secondPlayer, int gameID)
         {
             var questionIDs = GenerateFiveQuestions();
             Connection.Open();
@@ -131,11 +132,28 @@ namespace ServerApplication
             catch { maxFromCurrentGames = 0; }
             Connection.Close();
             maxFromGames = Math.Max(maxFromGames, maxFromCurrentGames);
-            return maxFromGames+1;
+            return maxFromGames + 1;
         }
-        private int[] GenerateFiveQuestions()
+        private List<int> GenerateFiveQuestions()
         {
-            return new int[] { 1, 2, 3, 4, 5 };
+            Connection.Open();
+            var com = Connection.CreateCommand();
+            com.CommandText = "SELECT QuestionID FROM questions";
+            var reader = com.ExecuteReader();
+            Random rand = new Random();
+            List<int> generatedQuestions = new List<int>();
+            while (generatedQuestions.Count < 5)
+            {
+                var random = rand.Next(1, reader.FieldCount+1);
+                if (generatedQuestions.Contains(random))
+                {
+                    continue;
+                }
+                else
+                generatedQuestions.Add(random);
+            }
+            Connection.Close();
+            return generatedQuestions;
         }
 
         public bool CheckIfGameIsReady(int gameId)
@@ -146,8 +164,8 @@ namespace ServerApplication
             com.CommandText = $"SELECT COUNT(GameID) FROM currentgames WHERE GameID = {gameId}";
             var read = com.ExecuteReader();
             read.Read();
-            
-            if (read.GetInt32(0) !=0)
+
+            if (read.GetInt32(0) != 0)
             {
                 Connection.Close();
                 return true;
@@ -207,8 +225,8 @@ namespace ServerApplication
             {
                 QuestionId = 0;
                 QuestionText = "";
-                CorrectAnswerIndex= 0;
-                Answers= new string[0];
+                CorrectAnswerIndex = 0;
+                Answers = new string[0];
             }
         }
     }
