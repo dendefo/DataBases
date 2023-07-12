@@ -18,34 +18,12 @@ USE `triviagame`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `players`
+-- Dumping events for database 'triviagame'
 --
 
-DROP TABLE IF EXISTS `players`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `players` (
-  `PlayerID` int NOT NULL AUTO_INCREMENT,
-  `PlayerName` varchar(45) NOT NULL,
-  `Games` int DEFAULT '0',
-  `Wons` int DEFAULT '0',
-  `Loses` int DEFAULT '0',
-  `IsConnected` tinyint DEFAULT '0',
-  PRIMARY KEY (`PlayerID`),
-  UNIQUE KEY `PlayerID_UNIQUE` (`PlayerID`),
-  UNIQUE KEY `PlayerName_UNIQUE` (`PlayerName`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
 --
--- Dumping data for table `players`
+-- Dumping routines for database 'triviagame'
 --
-
-LOCK TABLES `players` WRITE;
-/*!40000 ALTER TABLE `players` DISABLE KEYS */;
-INSERT INTO `players` VALUES (1,'Dendefo',0,0,0,0),(2,'Lol',1,1,1,0),(3,'bob',0,0,0,0),(4,'Darius',0,0,0,0),(5,'DorBenDor',0,0,0,0),(6,'bendorben',0,0,0,0);
-/*!40000 ALTER TABLE `players` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -56,4 +34,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-12 14:42:29
+-- Dump completed on 2023-07-12 14:42:30

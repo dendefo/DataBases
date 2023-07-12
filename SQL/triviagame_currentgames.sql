@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `triviagame` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `triviagame`;
 -- MySQL dump 10.13  Distrib 8.0.33, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: triviagame
@@ -25,15 +27,33 @@ DROP TABLE IF EXISTS `currentgames`;
 CREATE TABLE `currentgames` (
   `GameID` int NOT NULL,
   `FirstPlayerID` int NOT NULL,
-  `FirstPlayerScore` int NOT NULL DEFAULT '0',
   `SecondPlayerID` int NOT NULL,
-  `SecondPlayerScore` int NOT NULL DEFAULT '0',
   `FirstQuestionID` int NOT NULL,
   `SecondQuestionID` int NOT NULL,
   `ThirdQuestionID` int NOT NULL,
   `ForthQuestionID` int NOT NULL,
   `FifthQuestionID` int NOT NULL,
   `CurrentQuestionNumber` int NOT NULL DEFAULT '0',
+  `FirstPlayerFirstQuestionAnswerTime` float DEFAULT '0',
+  `SecondPlayerFirstQuestionAnswerTime` float DEFAULT '0',
+  `FirstPlayerFirstQuestionAnswer` int DEFAULT '0',
+  `SecondPlayerFirstQuestionAnswer` int DEFAULT '0',
+  `FirstPlayerSecondQuestionAnswerTime` float DEFAULT '0',
+  `SecondPlayerSecondQuestionAnswerTime` float DEFAULT '0',
+  `FirstPlayerSecondQuestionAnswer` int DEFAULT '0',
+  `SecondPlayerSecondQuestionAnswer` int DEFAULT '0',
+  `FirstPlayerThirdQuestionAnswerTime` float DEFAULT '0',
+  `SecondPlayerThirdQuestionAnswerTime` float DEFAULT '0',
+  `FirstPlayerThirdQuestionAnswer` int DEFAULT '0',
+  `SecondPlayerThirdQuestionAnswer` int DEFAULT '0',
+  `FirstPlayerForthQuestionAnswerTime` float DEFAULT '0',
+  `SecondPlayerForthQuestionAnswerTime` float DEFAULT '0',
+  `FirstPlayerForthQuestionAnswer` int DEFAULT '0',
+  `SecondPlayerForthQuestionAnswer` int DEFAULT '0',
+  `FirstPlayerFifthQuestionAnswerTime` float DEFAULT '0',
+  `SecondPlayerFifthQuestionAnswerTime` float DEFAULT '0',
+  `FirstPlayerFifthQuestionAnswer` int DEFAULT '0',
+  `SecondPlayerFifthQuestionAnswer` int DEFAULT '0',
   PRIMARY KEY (`GameID`),
   UNIQUE KEY `GameID_UNIQUE` (`GameID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -45,7 +65,6 @@ CREATE TABLE `currentgames` (
 
 LOCK TABLES `currentgames` WRITE;
 /*!40000 ALTER TABLE `currentgames` DISABLE KEYS */;
-INSERT INTO `currentgames` VALUES (1,1,0,2,0,1,2,3,4,5,1);
 /*!40000 ALTER TABLE `currentgames` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -58,4 +77,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-12 13:13:54
+-- Dump completed on 2023-07-12 14:42:29
