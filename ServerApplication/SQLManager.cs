@@ -138,13 +138,14 @@ namespace ServerApplication
         {
             Connection.Open();
             var com = Connection.CreateCommand();
-            com.CommandText = "SELECT QuestionID FROM questions";
+            com.CommandText = "SELECT Count(QuestionID) FROM questions";
             var reader = com.ExecuteReader();
             Random rand = new Random();
             List<int> generatedQuestions = new List<int>();
+            reader.Read();
             while (generatedQuestions.Count < 5)
             {
-                var random = rand.Next(1, reader.FieldCount+1);
+                var random = rand.Next(1, reader.GetInt32(0)+1);
                 if (generatedQuestions.Contains(random))
                 {
                     continue;
