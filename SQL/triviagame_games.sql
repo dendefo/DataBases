@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `triviagame` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `triviagame`;
 -- MySQL dump 10.13  Distrib 8.0.33, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: triviagame
@@ -18,33 +16,33 @@ USE `triviagame`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `questions`
+-- Table structure for table `games`
 --
 
-DROP TABLE IF EXISTS `questions`;
+DROP TABLE IF EXISTS `games`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `questions` (
-  `QuestionId` int NOT NULL AUTO_INCREMENT,
-  `QuestionText` varchar(75) NOT NULL,
-  `RightAnswerNumber` int NOT NULL,
-  `FirstAnswer` varchar(60) NOT NULL,
-  `SecondAnswer` varchar(60) NOT NULL,
-  `ThirdAnswer` varchar(60) NOT NULL,
-  `ForthAnswer` varchar(60) NOT NULL,
-  PRIMARY KEY (`QuestionId`),
-  UNIQUE KEY `QuestionId_UNIQUE` (`QuestionId`)
+CREATE TABLE `games` (
+  `GameID` int NOT NULL AUTO_INCREMENT,
+  `WinnerPlayerID` int NOT NULL,
+  `LoserPlayerID` int NOT NULL,
+  `IsDraw` tinyint NOT NULL DEFAULT '0',
+  PRIMARY KEY (`GameID`),
+  UNIQUE KEY `GameID_UNIQUE` (`GameID`) /*!80000 INVISIBLE */,
+  KEY `WinnerPlayerID_idx` (`WinnerPlayerID`),
+  KEY `LoserPlayerID_idx` (`LoserPlayerID`),
+  CONSTRAINT `LoserPlayerID` FOREIGN KEY (`LoserPlayerID`) REFERENCES `players` (`PlayerID`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `WinnerPlayerID` FOREIGN KEY (`WinnerPlayerID`) REFERENCES `players` (`PlayerID`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `questions`
+-- Dumping data for table `games`
 --
 
-LOCK TABLES `questions` WRITE;
-/*!40000 ALTER TABLE `questions` DISABLE KEYS */;
-INSERT INTO `questions` VALUES (1,'What is Love?',2,'Baby don\'t hurt me','I don\'t know:(','Chemical Reaction','Check \"Love is...\" gum');
-/*!40000 ALTER TABLE `questions` ENABLE KEYS */;
+LOCK TABLES `games` WRITE;
+/*!40000 ALTER TABLE `games` DISABLE KEYS */;
+/*!40000 ALTER TABLE `games` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -56,4 +54,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-10 16:03:27
+-- Dump completed on 2023-07-12 13:13:54

@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `triviagame` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `triviagame`;
 -- MySQL dump 10.13  Distrib 8.0.33, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: triviagame
@@ -34,7 +32,7 @@ CREATE TABLE `players` (
   PRIMARY KEY (`PlayerID`),
   UNIQUE KEY `PlayerID_UNIQUE` (`PlayerID`),
   UNIQUE KEY `PlayerName_UNIQUE` (`PlayerName`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -43,7 +41,7 @@ CREATE TABLE `players` (
 
 LOCK TABLES `players` WRITE;
 /*!40000 ALTER TABLE `players` DISABLE KEYS */;
-INSERT INTO `players` VALUES (1,'Dendefo',0,0,0,0),(2,'Lol',1,1,1,0);
+INSERT INTO `players` VALUES (1,'Dendefo',0,0,0,0),(2,'Lol',1,1,1,0),(3,'bob',0,0,0,0),(4,'Darius',0,0,0,0),(5,'DorBenDor',0,0,0,0),(6,'bendorben',0,0,0,0);
 /*!40000 ALTER TABLE `players` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -56,4 +54,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-10 16:03:28
+-- Dump completed on 2023-07-12 13:13:54
