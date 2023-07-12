@@ -108,30 +108,11 @@ namespace ServerApplication
         {
             Connection.Open();
             var com = Connection.CreateCommand();
-            com.CommandText = "SELECT MAX(GameID) FROM Games;";
+            com.CommandText = "SELECT GameID FROM games UNION SELECT GameID FROM currentgames ORDER BY GameID DESC;";
             var read = com.ExecuteReader();
-            int maxFromGames;
-            try
-            {
-                read.Read();
-                maxFromGames = int.Parse(read.GetString(0));
-            }
-            catch { maxFromGames = 0; }
+            read.Read();
+            var maxFromGames = read.GetInt32(0);
             Connection.Close();
-
-            Connection.Open();
-            com = Connection.CreateCommand();
-            com.CommandText = "SELECT MAX(GameID) FROM Games;";
-            read = com.ExecuteReader();
-            int maxFromCurrentGames;
-            try
-            {
-                read.Read();
-                maxFromCurrentGames = int.Parse(read.GetString(0));
-            }
-            catch { maxFromCurrentGames = 0; }
-            Connection.Close();
-            maxFromGames = Math.Max(maxFromGames, maxFromCurrentGames);
             return maxFromGames + 1;
         }
         private List<int> GenerateFiveQuestions()
