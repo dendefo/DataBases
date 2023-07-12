@@ -182,6 +182,10 @@ namespace ServerApplication
         {
 
         }
+        private int InGamePlayerID(int GameID, int PlayerID)
+        {
+            return 0;
+        }
     }
 
     public struct Question
