@@ -9,9 +9,10 @@ namespace ServerApplication.Controllers
 {
     public class UpdatePlayerAnswerController : ApiController
     {
-        public bool Get()
+        public void Get(int GameID, int PlayerID, float AnswerTime, bool IsAnswerRight)
         {
-            return true;
+            SQLManager manager = new SQLManager();
+            manager.UpdatePlayerQuestion(GameID, PlayerID, AnswerTime, IsAnswerRight);
         }
     }
 }

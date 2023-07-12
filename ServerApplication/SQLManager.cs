@@ -94,10 +94,9 @@ namespace ServerApplication
             Connection.Open();
             var com = Connection.CreateCommand();
             com.CommandText = $"INSERT INTO currentgames (`GameID`, `FirstPlayerID`, " +
-                $"`FirstPlayerScore`, `SecondPlayerID`, `SecondPlayerScore`, `FirstQuestionID`, " +
-                $"`SecondQuestionID`, `ThirdQuestionID`, `ForthQuestionID`, `FifthQuestionID`, " +
-                $"`CurrentQuestionNumber`) " +
-                $"VALUES ('{gameID}', '{firstPlayer}', '0', '{secondPlayer}', '0', '{questionIDs[0]}', '{questionIDs[1]}', '{questionIDs[2]}', '{questionIDs[3]}', '{questionIDs[4]}', '0');";
+                $"`SecondPlayerID`, `FirstQuestionID`,`SecondQuestionID`, `ThirdQuestionID`, " +
+                $"`ForthQuestionID`, `FifthQuestionID`, `CurrentQuestionNumber`) " +
+                $"VALUES ('{gameID}', '{firstPlayer}', '{secondPlayer}', '{questionIDs[0]}', '{questionIDs[1]}', '{questionIDs[2]}', '{questionIDs[3]}', '{questionIDs[4]}', '0');";
             com.ExecuteNonQuery();
 
             Connection.Close();
@@ -137,7 +136,6 @@ namespace ServerApplication
             Connection.Close();
             return generatedQuestions;
         }
-
         public bool CheckIfGameIsReady(int gameId)
         {
             Connection.Open();
@@ -169,17 +167,20 @@ namespace ServerApplication
             return username;
 
         }
-
         public Question GetQuestion(int questionId)
         {
             Connection.Open();
 
             var com = Connection.CreateCommand();
-            com.CommandText = $"SELECT * FROM questions WHERE QuestionID = (SELECT IF( CurrentQuestionNumber = 0,FirstQuestionID,IF(CurrentQuestionNumber = 1,SecondQuestionID,IF(CurrentQuestionNumber = 2,ThirdQuestionID,IF(CurrentQuestionNumber = 3,ForthQuestionID,FifthQuestionID))))FROM currentgames WHERE GameID = '1');";
+            com.CommandText = $"SELECT * FROM questions WHERE QuestionID = (SELECT IF( CurrentQuestionNumber = 0,FirstQuestionID,IF(CurrentQuestionNumber = 1,SecondQuestionID,IF(CurrentQuestionNumber = 2,ThirdQuestionID,IF(CurrentQuestionNumber = 3,ForthQuestionID,FifthQuestionID))))FROM currentgames WHERE GameID = '{questionId}');";
             Question question = new Question(com.ExecuteReader());
 
             Connection.Close();
             return question;
+        }
+        public void UpdatePlayerQuestion(int GameID, int PlayerID, float AnswerTime, bool IsAnswerRight)
+        {
+
         }
     }
 
