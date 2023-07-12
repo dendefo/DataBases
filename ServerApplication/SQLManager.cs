@@ -125,13 +125,13 @@ namespace ServerApplication
             reader.Read();
             while (generatedQuestions.Count < 5)
             {
-                var random = rand.Next(1, reader.GetInt32(0)+1);
+                var random = rand.Next(1, reader.GetInt32(0) + 1);
                 if (generatedQuestions.Contains(random))
                 {
                     continue;
                 }
                 else
-                generatedQuestions.Add(random);
+                    generatedQuestions.Add(random);
             }
             Connection.Close();
             return generatedQuestions;
@@ -184,7 +184,21 @@ namespace ServerApplication
         }
         private int InGamePlayerID(int GameID, int PlayerID)
         {
-            return 0;
+            Connection.Open();
+            var com = Connection.CreateCommand();
+            com.CommandText = $"SELECT FirstPlayerID FROM currentgames WHERE GameID={GameID}";
+            var read = com.ExecuteReader();
+            read.Read();
+            var CurrentGamePlayerID = read.GetInt32("FirstPlayerID");
+            Connection.Close();
+            if (CurrentGamePlayerID == PlayerID)
+            {
+                return 0;
+            }
+            else
+            {
+                return 1;
+            }
         }
     }
 
