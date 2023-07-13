@@ -196,7 +196,7 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\CreateGameController.cs" />
     <Compile Include="Controllers\GetQuestionController.cs" />
-    <Compile Include="Controllers\GetUsernameController.cs" />
+    <Compile Include="Controllers\PlayerDataController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\UpdatePlayerAnswerController.cs" />
     <Compile Include="Controllers\WaitForGameController.cs" />

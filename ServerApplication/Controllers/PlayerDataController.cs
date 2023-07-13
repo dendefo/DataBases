@@ -7,13 +7,13 @@ using System.Web.Http;
 
 namespace ServerApplication.Controllers
 {
-    public class GetUsernameController : ApiController
+    public class PlayerDataController : ApiController
     {
         // GET api/<controller>/5
-        public string Get(int usernameID)
+        public PlayerData Get(int PlayerID)
         {
             SQLManager man = new SQLManager();
-            return man.GetUsername(usernameID);
+            return man.GetPlayerData(PlayerID);
         }
     }
 }

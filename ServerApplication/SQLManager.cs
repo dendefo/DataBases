@@ -154,17 +154,16 @@ namespace ServerApplication
             Connection.Close();
             return false;
         }
-        public string GetUsername(int userId)
+        public PlayerData GetPlayerData(int userId)
         {
             Connection.Open();
 
             var com = Connection.CreateCommand();
-            com.CommandText = $"SELECT PlayerName FROM players WHERE PlayerID = {userId}";
+            com.CommandText = $"SELECT PlayerName,Games,Wons,Loses FROM players WHERE PlayerID = {userId}";
             var read = com.ExecuteReader();
-            read.Read();
-            string username = read.GetString("PlayerName");
+            PlayerData playerData = new PlayerData(read);
             Connection.Close();
-            return username;
+            return playerData;
 
         }
         public Question GetQuestion(int questionId)
@@ -280,6 +279,30 @@ namespace ServerApplication
                 QuestionText = "";
                 CorrectAnswerIndex = 0;
                 Answers = new string[0];
+            }
+        }
+    }
+    public struct PlayerData
+    {
+        public string _name;
+        public int _amountOfGames;
+        public int _wins;
+        public int _losses;
+        public PlayerData(MySqlDataReader reader)
+        {
+            if (reader.Read())
+            {
+                _name = reader.GetString("PlayerName");
+                _amountOfGames = reader.GetInt32(1);
+                _wins = reader.GetInt32(2);
+                _losses = reader.GetInt32(3);
+            }
+            else
+            {
+                _name = null;
+                _amountOfGames = 0;
+                _wins = 0;
+                _losses = 0;
             }
         }
     }
