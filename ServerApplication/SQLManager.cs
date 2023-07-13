@@ -180,7 +180,48 @@ namespace ServerApplication
         }
         public void UpdatePlayerQuestion(int GameID, int PlayerID, float AnswerTime, bool IsAnswerRight)
         {
+            Connection.Open();
+            var com = Connection.CreateCommand();
+            com.CommandText = "SELECT GameID FROM currentgames;";
+            var reader = com.ExecuteReader();
+            var list = new List<int>();
+            while (reader.Read())
+            {
+                list.Add(reader.GetInt32(0));
+            }
+            Connection.Close();
+            if (!list.Contains(GameID)) return;
+            int AnswerID = GetInGameQuestionID(GameID);
+            int inGamePlayerID = InGamePlayerID(GameID, PlayerID);
+            string QUERY = "";
+            if (inGamePlayerID == 0) QUERY = "FirstPlayer";
+            else QUERY = "SecondPlayer";
 
+            switch (AnswerID)
+            {
+                case 0:
+                    QUERY += "First";
+                    break;
+                case 1:
+                    QUERY += "Second";
+                    break;
+                case 2:
+                    QUERY += "Third";
+                    break;
+                case 3:
+                    QUERY += "Forth";
+                    break;
+                case 4:
+                    QUERY += "Fifth";
+                    break;
+            }
+            Connection.Open();
+            QUERY += "Question";
+            int isright = (IsAnswerRight ? 0 : 1);
+            com = Connection.CreateCommand();
+            com.CommandText = $"UPDATE currentgames SET {QUERY}AnswerTime = {AnswerTime} , {QUERY}Answer = {isright} WHERE GameID = {GameID};";
+            com.ExecuteNonQuery();
+            Connection.Close();
         }
         private int InGamePlayerID(int GameID, int PlayerID)
         {
@@ -199,6 +240,17 @@ namespace ServerApplication
             {
                 return 1;
             }
+        }
+        private int GetInGameQuestionID(int GameID)
+        {
+            Connection.Open();
+            var com = Connection.CreateCommand();
+            com.CommandText = $"SELECT CurrentQuestionNumber FROM currentgames Where GameID = {GameID};";
+            var reader = com.ExecuteReader();
+            reader.Read();
+            var toReturn = reader.GetInt32(0);
+            Connection.Close();
+            return toReturn;
         }
     }
 
