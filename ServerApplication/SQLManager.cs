@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
@@ -69,73 +70,6 @@ namespace ServerApplication
             Connection.Close();
             return AddPlayerToWaitList(id);
         }
-        private int AddPlayerToWaitList(int id)
-        {
-            int GameId = CalculateGameID();
-            Connection.Open();
-            var com = Connection.CreateCommand();
-            com.CommandText = $"INSERT INTO waitlist (PlayerID,GameID) VALUES ({id},{GameId})";
-            com.ExecuteNonQuery();
-            Connection.Close();
-            return GameId;
-        }
-        private void RemovePlayerFromWaitList(int id)
-        {
-            Connection.Open();
-            var com = Connection.CreateCommand();
-            com.CommandText = $"DELETE FROM `triviagame`.`waitlist` WHERE(`PlayerID` = '{id}')";
-            com.ExecuteNonQuery();
-            Connection.Close();
-
-        }
-        public int CreateGame(int firstPlayer, int secondPlayer, int gameID)
-        {
-            var questionIDs = GenerateFiveQuestions();
-            Connection.Open();
-            var com = Connection.CreateCommand();
-            com.CommandText = $"INSERT INTO currentgames (`GameID`, `FirstPlayerID`, " +
-                $"`SecondPlayerID`, `FirstQuestionID`,`SecondQuestionID`, `ThirdQuestionID`, " +
-                $"`ForthQuestionID`, `FifthQuestionID`, `CurrentQuestionNumber`) " +
-                $"VALUES ('{gameID}', '{firstPlayer}', '{secondPlayer}', '{questionIDs[0]}', '{questionIDs[1]}', '{questionIDs[2]}', '{questionIDs[3]}', '{questionIDs[4]}', '0');";
-            com.ExecuteNonQuery();
-
-            Connection.Close();
-            return gameID;
-
-        }
-        private int CalculateGameID()
-        {
-            Connection.Open();
-            var com = Connection.CreateCommand();
-            com.CommandText = "SELECT GameID FROM games UNION SELECT GameID FROM currentgames ORDER BY GameID DESC;";
-            var read = com.ExecuteReader();
-            read.Read();
-            var maxFromGames = read.GetInt32(0);
-            Connection.Close();
-            return maxFromGames + 1;
-        }
-        private List<int> GenerateFiveQuestions()
-        {
-            Connection.Open();
-            var com = Connection.CreateCommand();
-            com.CommandText = "SELECT Count(QuestionID) FROM questions";
-            var reader = com.ExecuteReader();
-            Random rand = new Random();
-            List<int> generatedQuestions = new List<int>();
-            reader.Read();
-            while (generatedQuestions.Count < 5)
-            {
-                var random = rand.Next(1, reader.GetInt32(0) + 1);
-                if (generatedQuestions.Contains(random))
-                {
-                    continue;
-                }
-                else
-                    generatedQuestions.Add(random);
-            }
-            Connection.Close();
-            return generatedQuestions;
-        }
         public bool CheckIfGameIsReady(int gameId)
         {
             Connection.Open();
@@ -166,18 +100,18 @@ namespace ServerApplication
             return playerData;
 
         }
-        public Question GetQuestion(int questionId)
+        public Question GetQuestion(int GameID)
         {
             Connection.Open();
 
             var com = Connection.CreateCommand();
-            com.CommandText = $"SELECT * FROM questions WHERE QuestionID = (SELECT IF( CurrentQuestionNumber = 0,FirstQuestionID,IF(CurrentQuestionNumber = 1,SecondQuestionID,IF(CurrentQuestionNumber = 2,ThirdQuestionID,IF(CurrentQuestionNumber = 3,ForthQuestionID,FifthQuestionID))))FROM currentgames WHERE GameID = '{questionId}');";
+            com.CommandText = $"SELECT * FROM questions WHERE QuestionID = (SELECT IF( CurrentQuestionNumber = 0,FirstQuestionID,IF(CurrentQuestionNumber = 1,SecondQuestionID,IF(CurrentQuestionNumber = 2,ThirdQuestionID,IF(CurrentQuestionNumber = 3,ForthQuestionID,IF(CurrentQuestionNumber = 4,FifthQuestionID,0)))))FROM currentgames WHERE GameID = '{GameID}');";
             Question question = new Question(com.ExecuteReader());
 
             Connection.Close();
             return question;
         }
-        public void UpdatePlayerQuestion(int GameID, int PlayerID, float AnswerTime, bool IsAnswerRight)
+        public void UpdatePlayerAnswer(int GameID, int PlayerID, float AnswerTime, bool IsAnswerRight)
         {
             Connection.Open();
             var com = Connection.CreateCommand();
@@ -193,34 +127,88 @@ namespace ServerApplication
             int AnswerID = GetInGameQuestionID(GameID);
             int inGamePlayerID = InGamePlayerID(GameID, PlayerID);
             string QUERY = "";
+
             if (inGamePlayerID == 0) QUERY = "FirstPlayer";
             else QUERY = "SecondPlayer";
 
-            switch (AnswerID)
-            {
-                case 0:
-                    QUERY += "First";
-                    break;
-                case 1:
-                    QUERY += "Second";
-                    break;
-                case 2:
-                    QUERY += "Third";
-                    break;
-                case 3:
-                    QUERY += "Forth";
-                    break;
-                case 4:
-                    QUERY += "Fifth";
-                    break;
-            }
+            string roundName = CalculateRoundName(AnswerID);
+            QUERY += roundName;
+
+
             Connection.Open();
             QUERY += "Question";
-            int isright = (IsAnswerRight ? 0 : 1);
             com = Connection.CreateCommand();
-            com.CommandText = $"UPDATE currentgames SET {QUERY}AnswerTime = {AnswerTime} , {QUERY}Answer = {isright} WHERE GameID = {GameID};";
+            com.CommandText = $"UPDATE currentgames SET {QUERY}AnswerTime = {AnswerTime.ToString().Replace(",", ".")} , {QUERY}Answer = {IsAnswerRight} WHERE GameID = {GameID};";
             com.ExecuteNonQuery();
             Connection.Close();
+            CheckIfRoundChanged(GameID, roundName);
+
+        }
+
+        private void CheckIfRoundChanged(int GameID, string RoundName)
+        {
+            Connection.Open();
+            var com = Connection.CreateCommand();
+            com.CommandText = $"UPDATE currentgames SET CurrentQuestionNumber = currentgames.CurrentQuestionNumber +(SELECT (IF(FirstPlayer{RoundName}QuestionAnswerTime=0,False,True) and IF(SecondPlayer{RoundName}QuestionAnswerTime=0,False,True)) as Ended) Where GameID = {GameID};";
+
+            if (com.ExecuteNonQuery() != 0 && RoundName == "Fifth")
+            {
+                Connection.Close();
+                MoveGameToHistory(GameID);
+            }
+            else
+            {
+                Connection.Close();
+            }
+        }
+        private void MoveGameToHistory(int GameID)
+        {
+
+        }
+        private void RemovePlayerFromWaitList(int id)
+        {
+            Connection.Open();
+            var com = Connection.CreateCommand();
+            com.CommandText = $"DELETE FROM `triviagame`.`waitlist` WHERE(`PlayerID` = '{id}')";
+            com.ExecuteNonQuery();
+            Connection.Close();
+
+        }
+        private int CreateGame(int firstPlayer, int secondPlayer, int gameID)
+        {
+            var questionIDs = GenerateFiveQuestions();
+            Connection.Open();
+            var com = Connection.CreateCommand();
+            com.CommandText = $"INSERT INTO currentgames (`GameID`, `FirstPlayerID`, " +
+                $"`SecondPlayerID`, `FirstQuestionID`,`SecondQuestionID`, `ThirdQuestionID`, " +
+                $"`ForthQuestionID`, `FifthQuestionID`, `CurrentQuestionNumber`) " +
+                $"VALUES ('{gameID}', '{firstPlayer}', '{secondPlayer}', '{questionIDs[0]}', '{questionIDs[1]}', '{questionIDs[2]}', '{questionIDs[3]}', '{questionIDs[4]}', '0');";
+            com.ExecuteNonQuery();
+
+            Connection.Close();
+            return gameID;
+
+        }
+        private int AddPlayerToWaitList(int id)
+        {
+            int GameId = CalculateGameID();
+            Connection.Open();
+            var com = Connection.CreateCommand();
+            com.CommandText = $"INSERT INTO waitlist (PlayerID,GameID) VALUES ({id},{GameId})";
+            com.ExecuteNonQuery();
+            Connection.Close();
+            return GameId;
+        }
+        private int CalculateGameID()
+        {
+            Connection.Open();
+            var com = Connection.CreateCommand();
+            com.CommandText = "SELECT GameID FROM games UNION SELECT GameID FROM currentgames ORDER BY GameID DESC;";
+            var read = com.ExecuteReader();
+            read.Read();
+            var maxFromGames = read.GetInt32(0);
+            Connection.Close();
+            return maxFromGames + 1;
         }
         private int InGamePlayerID(int GameID, int PlayerID)
         {
@@ -250,6 +238,45 @@ namespace ServerApplication
             var toReturn = reader.GetInt32(0);
             Connection.Close();
             return toReturn;
+        }
+        private string CalculateRoundName(int roundNumber)
+        {
+            switch (roundNumber)
+            {
+                case 0:
+                    return "First";
+                case 1:
+                    return "Second";
+                case 2:
+                    return "Third";
+                case 3:
+                    return "Forth";
+                case 4:
+                    return "Fifth";
+                default: return "";
+            }
+        }
+        private List<int> GenerateFiveQuestions()
+        {
+            Connection.Open();
+            var com = Connection.CreateCommand();
+            com.CommandText = "SELECT Count(QuestionID) FROM questions";
+            var reader = com.ExecuteReader();
+            Random rand = new Random();
+            List<int> generatedQuestions = new List<int>();
+            reader.Read();
+            while (generatedQuestions.Count < 5)
+            {
+                var random = rand.Next(1, reader.GetInt32(0) + 1);
+                if (generatedQuestions.Contains(random))
+                {
+                    continue;
+                }
+                else
+                    generatedQuestions.Add(random);
+            }
+            Connection.Close();
+            return generatedQuestions;
         }
     }
 

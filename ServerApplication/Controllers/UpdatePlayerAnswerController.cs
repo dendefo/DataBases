@@ -12,7 +12,7 @@ namespace ServerApplication.Controllers
         public void Get(int GameID, int PlayerID, float AnswerTime, bool IsAnswerRight)
         {
             SQLManager manager = new SQLManager();
-            manager.UpdatePlayerQuestion(GameID, PlayerID, AnswerTime, IsAnswerRight);
+            manager.UpdatePlayerAnswer(GameID, PlayerID, AnswerTime, IsAnswerRight);
         }
     }
 }
