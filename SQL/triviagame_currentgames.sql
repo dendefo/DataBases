@@ -36,24 +36,24 @@ CREATE TABLE `currentgames` (
   `CurrentQuestionNumber` int NOT NULL DEFAULT '0',
   `FirstPlayerFirstQuestionAnswerTime` float DEFAULT '0',
   `SecondPlayerFirstQuestionAnswerTime` float DEFAULT '0',
-  `FirstPlayerFirstQuestionAnswer` int DEFAULT '0',
-  `SecondPlayerFirstQuestionAnswer` int DEFAULT '0',
+  `FirstPlayerFirstQuestionAnswer` tinyint DEFAULT '0',
+  `SecondPlayerFirstQuestionAnswer` tinyint DEFAULT '0',
   `FirstPlayerSecondQuestionAnswerTime` float DEFAULT '0',
   `SecondPlayerSecondQuestionAnswerTime` float DEFAULT '0',
-  `FirstPlayerSecondQuestionAnswer` int DEFAULT '0',
-  `SecondPlayerSecondQuestionAnswer` int DEFAULT '0',
+  `FirstPlayerSecondQuestionAnswer` tinyint DEFAULT '0',
+  `SecondPlayerSecondQuestionAnswer` tinyint DEFAULT '0',
   `FirstPlayerThirdQuestionAnswerTime` float DEFAULT '0',
   `SecondPlayerThirdQuestionAnswerTime` float DEFAULT '0',
-  `FirstPlayerThirdQuestionAnswer` int DEFAULT '0',
-  `SecondPlayerThirdQuestionAnswer` int DEFAULT '0',
+  `FirstPlayerThirdQuestionAnswer` tinyint DEFAULT '0',
+  `SecondPlayerThirdQuestionAnswer` tinyint DEFAULT '0',
   `FirstPlayerForthQuestionAnswerTime` float DEFAULT '0',
   `SecondPlayerForthQuestionAnswerTime` float DEFAULT '0',
-  `FirstPlayerForthQuestionAnswer` int DEFAULT '0',
-  `SecondPlayerForthQuestionAnswer` int DEFAULT '0',
+  `FirstPlayerForthQuestionAnswer` tinyint DEFAULT '0',
+  `SecondPlayerForthQuestionAnswer` tinyint DEFAULT '0',
   `FirstPlayerFifthQuestionAnswerTime` float DEFAULT '0',
   `SecondPlayerFifthQuestionAnswerTime` float DEFAULT '0',
-  `FirstPlayerFifthQuestionAnswer` int DEFAULT '0',
-  `SecondPlayerFifthQuestionAnswer` int DEFAULT '0',
+  `FirstPlayerFifthQuestionAnswer` tinyint DEFAULT '0',
+  `SecondPlayerFifthQuestionAnswer` tinyint DEFAULT '0',
   PRIMARY KEY (`GameID`),
   UNIQUE KEY `GameID_UNIQUE` (`GameID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -65,6 +65,7 @@ CREATE TABLE `currentgames` (
 
 LOCK TABLES `currentgames` WRITE;
 /*!40000 ALTER TABLE `currentgames` DISABLE KEYS */;
+INSERT INTO `currentgames` VALUES (1,1,2,5,11,20,7,14,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 /*!40000 ALTER TABLE `currentgames` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -77,4 +78,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-12 14:42:29
+-- Dump completed on 2023-07-14 15:45:21
