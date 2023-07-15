@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Web;
-using System.Web.UI.WebControls;
-using Microsoft.Ajax.Utilities;
 using MySql.Data.MySqlClient;
-using Org.BouncyCastle.Crypto.Prng;
 
 namespace ServerApplication
 {
@@ -93,7 +86,7 @@ namespace ServerApplication
             Connection.Open();
 
             var com = Connection.CreateCommand();
-            com.CommandText = $"SELECT PlayerName,Games,Wons,Loses FROM players WHERE PlayerID = {userId}";
+            com.CommandText = $"SELECT (SELECT PlayerName FROM Players WHERE PlayerID={userId}) as PlayerName,\r\n(SELECT Count(WinnerPlayerID) FROM games Where WinnerPlayerId={userId} ) as Wons,\r\n(SELECT Count(LoserPlayerID) FROM games Where LoserPlayerID={userId}) as Loses,\r\n(SELECT Round(Avg(Wons+Loses)) From games) as Games;";
             var read = com.ExecuteReader();
             PlayerData playerData = new PlayerData(read);
             Connection.Close();
@@ -163,7 +156,22 @@ namespace ServerApplication
         }
         private void MoveGameToHistory(int GameID)
         {
+            int[] Players = CalculateWinner(GameID);
+            DeleteCurrentGame(GameID);
+            //Add to Games
 
+        }
+        private int[] CalculateWinner(int GameID)
+        {
+            return new int[2] { 0, 1 }; //First ID is Winner, second id is Loser
+        }
+        private void DeleteCurrentGame(int GameID)
+        {
+            Connection.Open();
+            var com = Connection.CreateCommand();
+            com.CommandText = $"DELETE FROM currentgames WHERE (GameID = {GameID});";
+            com.ExecuteNonQuery();
+            Connection.Close();
         }
         private void RemovePlayerFromWaitList(int id)
         {
@@ -320,9 +328,9 @@ namespace ServerApplication
             if (reader.Read())
             {
                 _name = reader.GetString("PlayerName");
-                _amountOfGames = reader.GetInt32(1);
-                _wins = reader.GetInt32(2);
-                _losses = reader.GetInt32(3);
+                _amountOfGames = reader.GetInt32("Games");
+                _wins = reader.GetInt32("Wons");
+                _losses = reader.GetInt32("Loses");
             }
             else
             {
