@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
+using Org.BouncyCastle.Crypto.Macs;
 
 namespace ServerApplication
 {
@@ -158,11 +159,22 @@ namespace ServerApplication
         {
             int[] Players = CalculateWinner(GameID);
             DeleteCurrentGame(GameID);
-            //Add to Games
 
+            Connection.Open();
+            var com = Connection.CreateCommand();
+            com.CommandText = $"INSERT INTO games (GameID, WinnerPlayerID, LoserPlayerID) VALUES ({GameID}, {Players[0]}, {Players[1]});";
+            com.ExecuteNonQuery();
+            Connection.Close();
         }
         private int[] CalculateWinner(int GameID)
         {
+            var ar = new object[][] { 
+                new object[] { 3.5f, 0 }, 
+                new object[] { 3.5f, 0 }, 
+                new object[] { 3.5f, 0 }, 
+                new object[] { 3.5f, 0 }, 
+                new object[] { 3.5f, 0 } };
+
             return new int[2] { 0, 1 }; //First ID is Winner, second id is Loser
         }
         private void DeleteCurrentGame(int GameID)
