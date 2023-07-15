@@ -27,9 +27,6 @@ DROP TABLE IF EXISTS `players`;
 CREATE TABLE `players` (
   `PlayerID` int NOT NULL AUTO_INCREMENT,
   `PlayerName` varchar(45) NOT NULL,
-  `Games` int DEFAULT '0',
-  `Wons` int DEFAULT '0',
-  `Loses` int DEFAULT '0',
   `IsConnected` tinyint DEFAULT '0',
   PRIMARY KEY (`PlayerID`),
   UNIQUE KEY `PlayerID_UNIQUE` (`PlayerID`),
@@ -43,7 +40,7 @@ CREATE TABLE `players` (
 
 LOCK TABLES `players` WRITE;
 /*!40000 ALTER TABLE `players` DISABLE KEYS */;
-INSERT INTO `players` VALUES (1,'Dendefo',0,0,0,0),(2,'Lol',1,1,1,0),(3,'bob',0,0,0,0),(4,'Darius',0,0,0,0),(5,'DorBenDor',0,0,0,0),(6,'bendorben',0,0,0,0);
+INSERT INTO `players` VALUES (1,'Dendefo',0),(2,'Lol',0),(3,'bob',0),(4,'Darius',0),(5,'DorBenDor',0),(6,'bendorben',0);
 /*!40000 ALTER TABLE `players` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -56,4 +53,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-14 15:45:21
+-- Dump completed on 2023-07-15 22:40:47

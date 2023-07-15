@@ -28,14 +28,13 @@ CREATE TABLE `games` (
   `GameID` int NOT NULL AUTO_INCREMENT,
   `WinnerPlayerID` int NOT NULL,
   `LoserPlayerID` int NOT NULL,
-  `IsDraw` tinyint NOT NULL DEFAULT '0',
   PRIMARY KEY (`GameID`),
   UNIQUE KEY `GameID_UNIQUE` (`GameID`) /*!80000 INVISIBLE */,
   KEY `WinnerPlayerID_idx` (`WinnerPlayerID`),
   KEY `LoserPlayerID_idx` (`LoserPlayerID`),
   CONSTRAINT `LoserPlayerID` FOREIGN KEY (`LoserPlayerID`) REFERENCES `players` (`PlayerID`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `WinnerPlayerID` FOREIGN KEY (`WinnerPlayerID`) REFERENCES `players` (`PlayerID`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -56,4 +55,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-14 15:45:20
+-- Dump completed on 2023-07-15 22:40:47
