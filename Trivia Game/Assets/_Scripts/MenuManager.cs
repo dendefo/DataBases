@@ -29,17 +29,29 @@ public class MenuManager : MonoBehaviour
     }
     IEnumerator GetUsername(int userID)
     {
-        UnityWebRequest www = UnityWebRequest.Get("https://localhost:44339/api/GetUsername?usernameID=" + userID);
+        UnityWebRequest www = UnityWebRequest.Get("https://localhost:44339/api/PlayerData?PlayerID=" + userID);
         yield return www.SendWebRequest();
 
         if (www.result != UnityWebRequest.Result.Success)
         {
+            Debug.Log("Error getting username");
             ReturnToLogin();
         }
         else
         {
-            UserName = www.downloadHandler.text.Trim('"');
-            userNameText.text = UserName;
+            PlayerData playerData = new PlayerData();
+            playerData = JsonUtility.FromJson<PlayerData>(www.downloadHandler.text);
+            userNameText.text = playerData._name.ToString();
+            wins.text = playerData._wins.ToString();
+            loses.text = playerData._losses.ToString();
         }
     }
+}
+
+public struct PlayerData
+{
+    public string _name;
+    public int _amountOfGames;
+    public int _wins;
+    public int _losses;
 }

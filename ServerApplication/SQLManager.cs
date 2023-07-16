@@ -87,7 +87,10 @@ namespace ServerApplication
             Connection.Open();
 
             var com = Connection.CreateCommand();
-            com.CommandText = $"SELECT (SELECT PlayerName FROM Players WHERE PlayerID={userId}) as PlayerName,\r\n(SELECT Count(WinnerPlayerID) FROM games Where WinnerPlayerId={userId} ) as Wons,\r\n(SELECT Count(LoserPlayerID) FROM games Where LoserPlayerID={userId}) as Loses,\r\n(SELECT Round(Avg(Wons+Loses)) From games) as Games;";
+            com.CommandText = $"SELECT (SELECT PlayerName FROM Players WHERE PlayerID={userId}) as PlayerName," +
+                $"(SELECT Count(WinnerPlayerID) FROM games Where WinnerPlayerId={userId} ) as Wons," +
+                $"(SELECT Count(LoserPlayerID) FROM games Where LoserPlayerID={userId}) as Loses," +
+                $"(SELECT Round(Avg(Wons+Loses)) From games) as Games;";
             var read = com.ExecuteReader();
             PlayerData playerData = new PlayerData(read);
             Connection.Close();
