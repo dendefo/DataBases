@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `triviagame` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `triviagame`;
 -- MySQL dump 10.13  Distrib 8.0.33, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: triviagame
@@ -25,16 +23,14 @@ DROP TABLE IF EXISTS `games`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `games` (
-  `GameID` int NOT NULL AUTO_INCREMENT,
-  `WinnerPlayerID` int NOT NULL,
-  `LoserPlayerID` int NOT NULL,
+  `GameID` int NOT NULL DEFAULT '0',
+  `WinnerPlayerID` int NOT NULL DEFAULT '0',
+  `LoserPlayerID` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`GameID`),
   UNIQUE KEY `GameID_UNIQUE` (`GameID`) /*!80000 INVISIBLE */,
   KEY `WinnerPlayerID_idx` (`WinnerPlayerID`),
-  KEY `LoserPlayerID_idx` (`LoserPlayerID`),
-  CONSTRAINT `LoserPlayerID` FOREIGN KEY (`LoserPlayerID`) REFERENCES `players` (`PlayerID`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `WinnerPlayerID` FOREIGN KEY (`WinnerPlayerID`) REFERENCES `players` (`PlayerID`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `LoserPlayerID_idx` (`LoserPlayerID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -43,6 +39,7 @@ CREATE TABLE `games` (
 
 LOCK TABLES `games` WRITE;
 /*!40000 ALTER TABLE `games` DISABLE KEYS */;
+INSERT INTO `games` VALUES (0,0,0);
 /*!40000 ALTER TABLE `games` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -55,4 +52,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-15 22:40:47
+-- Dump completed on 2023-07-16 19:32:18

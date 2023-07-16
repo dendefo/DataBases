@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 using MySql.Data.MySqlClient;
 using Org.BouncyCastle.Crypto.Macs;
 
@@ -171,15 +172,73 @@ namespace ServerApplication
         }
         private int[] CalculateWinner(int GameID)
         {
-            var ar = new object[][] { 
-                new object[] { 3.5f, 0 }, 
-                new object[] { 3.5f, 0 }, 
-                new object[] { 3.5f, 0 }, 
-                new object[] { 3.5f, 0 }, 
-                new object[] { 3.5f, 0 } };
-
-            return new int[2] { 0, 1 }; //First ID is Winner, second id is Loser
+            Connection.Open();
+            var com = Connection.CreateCommand();
+            com.CommandText = $"SELECT FirstPlayerID,SecondPlayerID FROM currentgames WHERE GameID = {GameID}";
+            var reader = com.ExecuteReader();
+            reader.Read();
+            int[] TwoPlayers = CalculateTwoPlayersScore(GameID);
+            if (TwoPlayers[0] > TwoPlayers[1])
+            {
+                TwoPlayers[0] = reader.GetInt32(0);
+                TwoPlayers[1] = reader.GetInt32(1);
+            }
+            else
+            {
+                TwoPlayers[0] = reader.GetInt32(1);
+                TwoPlayers[1] = reader.GetInt32(0);
+            }
+            Connection.Close();
+            return TwoPlayers;
         }
+        private int[] CalculateTwoPlayersScore(int GameID)
+        {
+            Connection.Open();
+            var com = Connection.CreateCommand();
+            var reader = com.ExecuteReader();
+            com.CommandText = $"SELECT FirstPlayerID,SecondPlayerID,FirstPlayerFirstQuestionAnswerTime,FirstPlayerFirstQuestionAnswer,FirstPlayerSecondQuestionAnswerTime,FirstPlayerSecondQuestionAnswer,FirstPlayerThirdQuestionAnswerTime,FirstPlayerThirdQuestionAnswer,FirstPlayerForthQuestionAnswerTime,FirstPlayerForthQuestionAnswer,FirstPlayerFifthQuestionAnswerTime,FirstPlayerFifthQuestionAnswer, SecondPlayerFirstQuestionAnswerTime,SecondPlayerFirstQuestionAnswer,SecondPlayerSecondQuestionAnswerTime,SecondPlayerSecondQuestionAnswer,SecondPlayerThirdQuestionAnswerTime,SecondPlayerThirdQuestionAnswer,SecondPlayerForthQuestionAnswerTime,SecondPlayerForthQuestionAnswer,SecondPlayerFifthQuestionAnswerTime,SecondPlayerFifthQuestionAnswer FROM currentgames WHERE GameID = {GameID}";
+            int firstPlayerScore = 0;
+            int secondPlayerScore = 0;
+
+            reader.Read();
+            var FirstPlayerArray = new int[][] {
+                new int[] { reader.GetInt32(2), reader.GetInt16(3) },
+                new int[] { reader.GetInt32(4), reader.GetInt16(5) },
+                new int[] { reader.GetInt32(6), reader.GetInt16(7) },
+                new int[] { reader.GetInt32(8), reader.GetInt16(9) },
+                new int[] { reader.GetInt32(10), reader.GetInt16(11) } };
+            var SecondPlayerArray = new int[][]
+            {
+                new int[] { reader.GetInt32(12), reader.GetInt16(13) },
+                new int[] { reader.GetInt32(14), reader.GetInt16(15) },
+                new int[] { reader.GetInt32(16), reader.GetInt16(17) },
+                new int[] { reader.GetInt32(18), reader.GetInt16(19) },
+                new int[] { reader.GetInt32(20), reader.GetInt16(21) } };
+            for (int i = 0; i < 5; i++)
+            {
+
+                if (FirstPlayerArray[i][1] != 0 && SecondPlayerArray[i][1] != 0)
+                {
+
+                    if (FirstPlayerArray[i][0] < SecondPlayerArray[i][0])
+                    {
+                        secondPlayerScore += 1;
+                        firstPlayerScore += 2;
+                    }
+                    else
+                    {
+                        secondPlayerScore += 2;
+                        firstPlayerScore += 1;
+                    }
+                }
+                else if (FirstPlayerArray[i][1] == 1) firstPlayerScore += 2;
+                else if (SecondPlayerArray[i][1] == 1) secondPlayerScore += 2;
+
+            }
+            Connection.Close();
+            return new int[2] { firstPlayerScore, secondPlayerScore };
+        }
+
         private void DeleteCurrentGame(int GameID)
         {
             Connection.Open();
