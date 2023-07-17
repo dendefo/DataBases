@@ -11,21 +11,30 @@ public class MenuManager : MonoBehaviour
     [SerializeField] TMP_Text userNameText;
     [SerializeField] TMP_Text wins;
     [SerializeField] TMP_Text loses;
-    private void Start()
-    {
-        
-    }
+    [SerializeField] TMP_Text errorText;
+    [SerializeField] GameObject loginScreen;
+    [SerializeField] GameObject gameScreen;
     private void OnEnable()
     {
         StartCoroutine(GetUsername(UserID));
     }
     public void PlayButton()
     {
-
+        StartCoroutine(CreateGame(UserID));
     }
-    void ReturnToLogin()
+    void StartGame(int gameID, int userID)
     {
-
+        GameHandeler.GameID = gameID;
+        GameHandeler.UserID = userID;
+        gameScreen.SetActive(true);
+        gameObject.SetActive(false);
+    }
+    void DisconnectFromGame()
+    {
+        gameObject.SetActive(false);
+        loginScreen.SetActive(true);
+        errorText.gameObject.SetActive(true);
+        errorText.text = "Disconnected From Server";
     }
     IEnumerator GetUsername(int userID)
     {
@@ -35,15 +44,30 @@ public class MenuManager : MonoBehaviour
         if (www.result != UnityWebRequest.Result.Success)
         {
             Debug.Log("Error getting username");
-            ReturnToLogin();
+            DisconnectFromGame();
         }
         else
         {
-            PlayerData playerData = new PlayerData();
-            playerData = JsonUtility.FromJson<PlayerData>(www.downloadHandler.text);
+            PlayerData playerData = JsonUtility.FromJson<PlayerData>(www.downloadHandler.text);
             userNameText.text = playerData._name.ToString();
             wins.text = playerData._wins.ToString();
             loses.text = playerData._losses.ToString();
+        }
+    }
+    IEnumerator CreateGame(int userID)
+    {
+        UnityWebRequest www = UnityWebRequest.Get("https://localhost:44339/api/CreateGame/" + userID);
+        yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Debug.Log("Failed to Create Game");
+            DisconnectFromGame();
+        }
+        else
+        {
+            int gameID = int.Parse(www.downloadHandler.text);
+            StartGame(gameID, userID);
         }
     }
 }

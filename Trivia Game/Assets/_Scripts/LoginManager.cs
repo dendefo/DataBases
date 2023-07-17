@@ -10,10 +10,6 @@ public class LoginManager : MonoBehaviour
     [SerializeField] TMP_Text errorText;
     [SerializeField] GameObject newUserPopup;
     [SerializeField] GameObject mainMenu;
-    void Start()
-    {
-        
-    }
 
     public void LoginToServer()
     {
