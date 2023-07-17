@@ -148,15 +148,22 @@ namespace ServerApplication
             Connection.Open();
             var com = Connection.CreateCommand();
             com.CommandText = $"UPDATE currentgames SET CurrentQuestionNumber = currentgames.CurrentQuestionNumber +(SELECT (IF(FirstPlayer{RoundName}QuestionAnswerTime=0,False,True) and IF(SecondPlayer{RoundName}QuestionAnswerTime=0,False,True)) as Ended) Where GameID = {GameID};";
-
-            if (com.ExecuteNonQuery() != 0 && RoundName == "Fifth")
+            com.ExecuteNonQuery();
+            Connection.Close();
+            //https://localhost:44339/api/UpdatePlayerAnswer?GameID=2&PlayerID=2&AnswerTime=4&IsAnswerRight=False
+            if (RoundName == "Fifth")
             {
+                Connection.Open();
+                com = Connection.CreateCommand();
+                com.CommandText = $"SELECT CurrentQuestionNumber FROM currentgames WHERE GameId= {GameID};";
+                var read = com.ExecuteReader();
+                read.Read();
+                int lol = read.GetInt32(0);
                 Connection.Close();
-                MoveGameToHistory(GameID);
-            }
-            else
-            {
-                Connection.Close();
+                if (lol == 5)
+                {
+                    MoveGameToHistory(GameID);
+                }
             }
         }
         private void MoveGameToHistory(int GameID)
@@ -172,12 +179,12 @@ namespace ServerApplication
         }
         private int[] CalculateWinner(int GameID)
         {
+            int[] TwoPlayers = CalculateTwoPlayersScore(GameID);
             Connection.Open();
             var com = Connection.CreateCommand();
             com.CommandText = $"SELECT FirstPlayerID,SecondPlayerID FROM currentgames WHERE GameID = {GameID}";
             var reader = com.ExecuteReader();
             reader.Read();
-            int[] TwoPlayers = CalculateTwoPlayersScore(GameID);
             if (TwoPlayers[0] > TwoPlayers[1])
             {
                 TwoPlayers[0] = reader.GetInt32(0);
@@ -195,8 +202,8 @@ namespace ServerApplication
         {
             Connection.Open();
             var com = Connection.CreateCommand();
-            var reader = com.ExecuteReader();
             com.CommandText = $"SELECT FirstPlayerID,SecondPlayerID,FirstPlayerFirstQuestionAnswerTime,FirstPlayerFirstQuestionAnswer,FirstPlayerSecondQuestionAnswerTime,FirstPlayerSecondQuestionAnswer,FirstPlayerThirdQuestionAnswerTime,FirstPlayerThirdQuestionAnswer,FirstPlayerForthQuestionAnswerTime,FirstPlayerForthQuestionAnswer,FirstPlayerFifthQuestionAnswerTime,FirstPlayerFifthQuestionAnswer, SecondPlayerFirstQuestionAnswerTime,SecondPlayerFirstQuestionAnswer,SecondPlayerSecondQuestionAnswerTime,SecondPlayerSecondQuestionAnswer,SecondPlayerThirdQuestionAnswerTime,SecondPlayerThirdQuestionAnswer,SecondPlayerForthQuestionAnswerTime,SecondPlayerForthQuestionAnswer,SecondPlayerFifthQuestionAnswerTime,SecondPlayerFifthQuestionAnswer FROM currentgames WHERE GameID = {GameID}";
+            var reader = com.ExecuteReader();
             int firstPlayerScore = 0;
             int secondPlayerScore = 0;
 
@@ -287,8 +294,8 @@ namespace ServerApplication
             var com = Connection.CreateCommand();
             com.CommandText = "SELECT GameID FROM games UNION SELECT GameID FROM currentgames ORDER BY GameID DESC;";
             var read = com.ExecuteReader();
-            read.Read();
-            var maxFromGames = read.GetInt32(0);
+            int maxFromGames = 0;
+            if (read.Read()) { maxFromGames = read.GetInt32(0); }
             Connection.Close();
             return maxFromGames + 1;
         }
