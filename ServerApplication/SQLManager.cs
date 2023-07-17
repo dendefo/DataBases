@@ -8,16 +8,29 @@ namespace ServerApplication
 {
     public class SQLManager
     {
-        static MySqlConnection Connection;
-
+        string con_string = "Server=localhost; database=triviagame; UID=root; password=12345";
+        MySqlConnection Connection;
+       
+        private void Connect()
+        {
+            Connection = new MySqlConnection(con_string);
+            try
+            {
+                Connection.Open();
+            }
+            catch
+            {
+                Connection.Close();
+            }
+        }
         public SQLManager()
         {
-            if (Connection == null) Connection = new MySqlConnection(SQLString.CONNECTION_STRING);
+            if (Connection == null) Connection = new MySqlConnection(con_string);
         }
 
         public int Login(string login)
         {
-            Connection.Open();
+            Connect();
             var com = Connection.CreateCommand();
             com.CommandText = $"SELECT * FROM Players WHERE PlayerName = '{login}'"; //Add additional check for IS PLAYER CONNECTED
             var reader = com.ExecuteReader();
@@ -36,7 +49,7 @@ namespace ServerApplication
         {
 
             var com = Connection.CreateCommand();
-            Connection.Open();
+            Connect();
             com = Connection.CreateCommand();
             com.CommandText = $"INSERT INTO players (PlayerName) VALUES ('{username}');";
             com.ExecuteNonQuery();
@@ -45,7 +58,7 @@ namespace ServerApplication
         }
         public int ConnectToGame(int id)
         {
-            Connection.Open();
+            Connect();
             var com = Connection.CreateCommand();
             com.CommandText = $"SELECT * FROM waitlist";
             var reader = com.ExecuteReader();
@@ -67,7 +80,7 @@ namespace ServerApplication
         }
         public bool CheckIfGameIsReady(int gameId)
         {
-            Connection.Open();
+            Connect();
 
             var com = Connection.CreateCommand();
             com.CommandText = $"SELECT COUNT(GameID) FROM currentgames WHERE GameID = {gameId}";
@@ -85,7 +98,7 @@ namespace ServerApplication
         }
         public PlayerData GetPlayerData(int userId)
         {
-            Connection.Open();
+            Connect();
 
             var com = Connection.CreateCommand();
             com.CommandText = $"SELECT (SELECT PlayerName FROM Players WHERE PlayerID={userId}) as PlayerName," +
@@ -100,18 +113,17 @@ namespace ServerApplication
         }
         public Question GetQuestion(int GameID)
         {
-            Connection.Open();
+            Connect();
 
             var com = Connection.CreateCommand();
             com.CommandText = $"SELECT * FROM questions WHERE QuestionID = (SELECT IF( CurrentQuestionNumber = 0,FirstQuestionID,IF(CurrentQuestionNumber = 1,SecondQuestionID,IF(CurrentQuestionNumber = 2,ThirdQuestionID,IF(CurrentQuestionNumber = 3,ForthQuestionID,IF(CurrentQuestionNumber = 4,FifthQuestionID,0)))))FROM currentgames WHERE GameID = '{GameID}');";
             Question question = new Question(com.ExecuteReader());
-
             Connection.Close();
             return question;
         }
         public void UpdatePlayerAnswer(int GameID, int PlayerID, float AnswerTime, bool IsAnswerRight)
         {
-            Connection.Open();
+            Connect();
             var com = Connection.CreateCommand();
             com.CommandText = "SELECT GameID FROM currentgames;";
             var reader = com.ExecuteReader();
@@ -133,7 +145,7 @@ namespace ServerApplication
             QUERY += roundName;
 
 
-            Connection.Open();
+            Connect();
             QUERY += "Question";
             com = Connection.CreateCommand();
             com.CommandText = $"UPDATE currentgames SET {QUERY}AnswerTime = {AnswerTime.ToString().Replace(",", ".")} , {QUERY}Answer = {IsAnswerRight} WHERE GameID = {GameID};";
@@ -145,7 +157,7 @@ namespace ServerApplication
 
         private void CheckIfRoundChanged(int GameID, string RoundName)
         {
-            Connection.Open();
+            Connect();
             var com = Connection.CreateCommand();
             com.CommandText = $"UPDATE currentgames SET CurrentQuestionNumber = currentgames.CurrentQuestionNumber +(SELECT (IF(FirstPlayer{RoundName}QuestionAnswerTime=0,False,True) and IF(SecondPlayer{RoundName}QuestionAnswerTime=0,False,True)) as Ended) Where GameID = {GameID};";
             com.ExecuteNonQuery();
@@ -153,7 +165,7 @@ namespace ServerApplication
             //https://localhost:44339/api/UpdatePlayerAnswer?GameID=2&PlayerID=2&AnswerTime=4&IsAnswerRight=False
             if (RoundName == "Fifth")
             {
-                Connection.Open();
+                Connect();
                 com = Connection.CreateCommand();
                 com.CommandText = $"SELECT CurrentQuestionNumber FROM currentgames WHERE GameId= {GameID};";
                 var read = com.ExecuteReader();
@@ -171,7 +183,7 @@ namespace ServerApplication
             int[] Players = CalculateWinner(GameID);
             DeleteCurrentGame(GameID);
 
-            Connection.Open();
+            Connect();
             var com = Connection.CreateCommand();
             com.CommandText = $"INSERT INTO games (GameID, WinnerPlayerID, LoserPlayerID) VALUES ({GameID}, {Players[0]}, {Players[1]});";
             com.ExecuteNonQuery();
@@ -180,7 +192,7 @@ namespace ServerApplication
         private int[] CalculateWinner(int GameID)
         {
             int[] TwoPlayers = CalculateTwoPlayersScore(GameID);
-            Connection.Open();
+            Connect();
             var com = Connection.CreateCommand();
             com.CommandText = $"SELECT FirstPlayerID,SecondPlayerID FROM currentgames WHERE GameID = {GameID}";
             var reader = com.ExecuteReader();
@@ -200,7 +212,7 @@ namespace ServerApplication
         }
         private int[] CalculateTwoPlayersScore(int GameID)
         {
-            Connection.Open();
+            Connect();
             var com = Connection.CreateCommand();
             com.CommandText = $"SELECT FirstPlayerID,SecondPlayerID,FirstPlayerFirstQuestionAnswerTime,FirstPlayerFirstQuestionAnswer,FirstPlayerSecondQuestionAnswerTime,FirstPlayerSecondQuestionAnswer,FirstPlayerThirdQuestionAnswerTime,FirstPlayerThirdQuestionAnswer,FirstPlayerForthQuestionAnswerTime,FirstPlayerForthQuestionAnswer,FirstPlayerFifthQuestionAnswerTime,FirstPlayerFifthQuestionAnswer, SecondPlayerFirstQuestionAnswerTime,SecondPlayerFirstQuestionAnswer,SecondPlayerSecondQuestionAnswerTime,SecondPlayerSecondQuestionAnswer,SecondPlayerThirdQuestionAnswerTime,SecondPlayerThirdQuestionAnswer,SecondPlayerForthQuestionAnswerTime,SecondPlayerForthQuestionAnswer,SecondPlayerFifthQuestionAnswerTime,SecondPlayerFifthQuestionAnswer FROM currentgames WHERE GameID = {GameID}";
             var reader = com.ExecuteReader();
@@ -248,7 +260,7 @@ namespace ServerApplication
 
         private void DeleteCurrentGame(int GameID)
         {
-            Connection.Open();
+            Connect();
             var com = Connection.CreateCommand();
             com.CommandText = $"DELETE FROM currentgames WHERE (GameID = {GameID});";
             com.ExecuteNonQuery();
@@ -256,7 +268,7 @@ namespace ServerApplication
         }
         private void RemovePlayerFromWaitList(int id)
         {
-            Connection.Open();
+            Connect();
             var com = Connection.CreateCommand();
             com.CommandText = $"DELETE FROM `triviagame`.`waitlist` WHERE(`PlayerID` = '{id}')";
             com.ExecuteNonQuery();
@@ -266,7 +278,7 @@ namespace ServerApplication
         private int CreateGame(int firstPlayer, int secondPlayer, int gameID)
         {
             var questionIDs = GenerateFiveQuestions();
-            Connection.Open();
+            Connect();
             var com = Connection.CreateCommand();
             com.CommandText = $"INSERT INTO currentgames (`GameID`, `FirstPlayerID`, " +
                 $"`SecondPlayerID`, `FirstQuestionID`,`SecondQuestionID`, `ThirdQuestionID`, " +
@@ -281,7 +293,7 @@ namespace ServerApplication
         private int AddPlayerToWaitList(int id)
         {
             int GameId = CalculateGameID();
-            Connection.Open();
+            Connect();
             var com = Connection.CreateCommand();
             com.CommandText = $"INSERT INTO waitlist (PlayerID,GameID) VALUES ({id},{GameId})";
             com.ExecuteNonQuery();
@@ -290,7 +302,7 @@ namespace ServerApplication
         }
         private int CalculateGameID()
         {
-            Connection.Open();
+            Connect();
             var com = Connection.CreateCommand();
             com.CommandText = "SELECT GameID FROM games UNION SELECT GameID FROM currentgames ORDER BY GameID DESC;";
             var read = com.ExecuteReader();
@@ -301,7 +313,7 @@ namespace ServerApplication
         }
         private int InGamePlayerID(int GameID, int PlayerID)
         {
-            Connection.Open();
+            Connect();
             var com = Connection.CreateCommand();
             com.CommandText = $"SELECT FirstPlayerID FROM currentgames WHERE GameID={GameID}";
             var read = com.ExecuteReader();
@@ -319,7 +331,7 @@ namespace ServerApplication
         }
         private int GetInGameQuestionID(int GameID)
         {
-            Connection.Open();
+            Connect();
             var com = Connection.CreateCommand();
             com.CommandText = $"SELECT CurrentQuestionNumber FROM currentgames Where GameID = {GameID};";
             var reader = com.ExecuteReader();
@@ -347,7 +359,7 @@ namespace ServerApplication
         }
         private List<int> GenerateFiveQuestions()
         {
-            Connection.Open();
+            Connect();
             var com = Connection.CreateCommand();
             com.CommandText = "SELECT Count(QuestionID) FROM questions";
             var reader = com.ExecuteReader();
