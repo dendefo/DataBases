@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using System.Net;
+using System.Net.Http;
 using System.Web.Http;
 
 namespace ServerApplication.Controllers
 {
-    public class GameResultsController: ApiController
+    public class GameHistoryController : ApiController
     {
-
-        public GameData Get(int GameID)
+        public List<GameData> Get(int PlayerID)
         {
             SQLManager sQLManager = new SQLManager();
-            return sQLManager.GetGameResults(GameID);
-            //return sQLManager.Register(username);
-
+            return sQLManager.GetGameHystory(PlayerID);
         }
     }
 }

@@ -11,7 +11,7 @@ namespace ServerApplication
     {
         string con_string = "Server=localhost; database=triviagame; UID=root; password=12345";
         MySqlConnection Connection;
-       
+
         private void Connect()
         {
             Connection = new MySqlConnection(con_string);
@@ -33,17 +33,23 @@ namespace ServerApplication
         {
             Connect();
             var com = Connection.CreateCommand();
-            com.CommandText = $"SELECT * FROM Players WHERE PlayerName = '{login}'"; //Add additional check for IS PLAYER CONNECTED
+            com.CommandText = $"SELECT * FROM Players WHERE PlayerName = '{login}' AND IsConnected=0"; //Add additional check for IS PLAYER CONNECTED
             var reader = com.ExecuteReader();
-            int count = 0;
             int id = -1;
-            while (reader.Read())
+            if (reader.Read())
             {
                 id = reader.GetInt32("PlayerID");
-                count++;
             }
             Connection.Close();
-            if (count == 1) return id; //MAKE PLAYER CONNECTED
+            if (id != -1)
+            {
+                Connect();
+                com = Connection.CreateCommand();
+                com.CommandText = $"UPDATE players SET IsConnected = 1 WHERE (PlayerID = {id});";
+                com.ExecuteNonQuery();
+                Connection.Close();
+                return id;
+            } //MAKE PLAYER CONNECTED
             else return -1;
         }
         public int Register(string username)
@@ -79,7 +85,7 @@ namespace ServerApplication
             Connection.Close();
             return AddPlayerToWaitList(id);
         }
-        public int[] GetGameResults(int GameID)
+        public GameData GetGameResults(int GameID)
         {
             int[] res = new int[2];
             Connect();
@@ -88,15 +94,18 @@ namespace ServerApplication
             var reader = com.ExecuteReader();
             if (reader.Read())
             {
-                res[0] = reader.GetInt32("WinnerPlayerID");
-                res[1] = reader.GetInt32("LoserPlayerID");
+                var game = new GameData(reader);
+                Connection.Close();
+                return game;
             }
             else
             {
-                res[0] = 0;
-                res[1] = 0;
+                var game = new GameData();
+                game.WinnerID = 0;
+                game.LoserID = 0;
+                Connection.Close();
+                return game;
             }
-            return res;
         }
         public bool CheckIfGameIsReady(int gameId)
         {
@@ -140,6 +149,26 @@ namespace ServerApplication
             Question question = new Question(com.ExecuteReader());
             Connection.Close();
             return question;
+        }
+        public List<GameData> GetGameHystory(int PlayerID)
+        {
+            List<GameData> data = new List<GameData>();
+            Connect();
+            var com = Connection.CreateCommand();
+            com.CommandText = $"SELECT * FROM triviagame.games WHERE WinnerPlayerID={PlayerID} OR LoserPlayerID={PlayerID};";
+            var reader = com.ExecuteReader();
+            if (!reader.HasRows)
+            {
+                Connection.Close();
+                return data;
+            }
+
+            while (reader.Read())
+            {
+                data.Add(new GameData(reader));
+            }
+            Connection.Close();
+            return data;
         }
         public void UpdatePlayerAnswer(int GameID, int PlayerID, float AnswerTime, bool IsAnswerRight)
         {
@@ -452,6 +481,16 @@ namespace ServerApplication
                 _wins = 0;
                 _losses = 0;
             }
+        }
+    }
+    public struct GameData
+    {
+        public int WinnerID;
+        public int LoserID;
+        public GameData(MySqlDataReader reader)
+        {
+            WinnerID = reader.GetInt32("WinnerPlayerID");
+            LoserID = reader.GetInt32("LoserPlayerID");
         }
     }
 }
