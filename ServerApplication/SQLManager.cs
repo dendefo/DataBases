@@ -203,6 +203,14 @@ namespace ServerApplication
             CheckIfRoundChanged(GameID, roundName);
 
         }
+        public void Disconnect(int PlayerID)
+        {
+            Connect();
+            var com = Connection.CreateCommand();
+            com.CommandText = $"UPDATE players SET IsConnected = 0 WHERE (PlayerID = {PlayerID});";
+            com.ExecuteNonQuery();
+            Connection.Close();
+        }
 
         private void CheckIfRoundChanged(int GameID, string RoundName)
         {
