@@ -11,6 +11,13 @@ public class LoginManager : MonoBehaviour
     [SerializeField] GameObject newUserPopup;
     [SerializeField] GameObject mainMenu;
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            LoginToServer();
+        }
+    }
     public void LoginToServer()
     {
         if(CheckUsername(userNameInput.text))
