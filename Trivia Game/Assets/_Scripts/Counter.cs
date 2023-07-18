@@ -15,7 +15,6 @@ public class Counter : MonoBehaviour
     public void ChangeText()
     {
         text.text = _number.ToString();
-        Debug.Log("Change");
     }
 
     public void End()

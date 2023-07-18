@@ -9,6 +9,7 @@ public class GameHandeler : MonoBehaviour
     public static int UserID;
     public static int GameID;
     public static int currentQuestionID;
+    public int QuestionIndicator = 1;
 
     [SerializeField] GameObject waitForPlayerScreen;
     [SerializeField] GameObject counter;
@@ -16,6 +17,7 @@ public class GameHandeler : MonoBehaviour
     [SerializeField] GameObject winnerScreen;
     [SerializeField] TMP_Text winnerText;
     [SerializeField] GameObject loginScreen;
+    [SerializeField] GameObject menuScreen;
     [SerializeField] TMP_Text errorText;
     [SerializeField] QuestionHandeler questionHandeler;
     [SerializeField] SoundManager soundManager;
@@ -26,15 +28,11 @@ public class GameHandeler : MonoBehaviour
     bool waitingForPlayerAnswer = false;
     float nextActionTime = 0.0f;
     
-
-    private void Start()
+    private void OnEnable()
     {
         counter.SetActive(false);
         questionScreen.SetActive(false);
         winnerScreen.SetActive(false);
-    }
-    private void OnEnable()
-    {
         waitForPlayerScreen.SetActive(true);
     }
     private void Update()
@@ -77,6 +75,7 @@ public class GameHandeler : MonoBehaviour
     {
         waitForPlayerScreen.SetActive(false);
         counter.SetActive(true);
+        soundManager.PlayTimerMusic();
     }
     public void StartGame()
     {
@@ -88,8 +87,16 @@ public class GameHandeler : MonoBehaviour
     public void EndGame()
     {
         questionScreen.SetActive(false);
+        waitForPlayerScreen.SetActive(false);
         winnerScreen.SetActive(true);
+        soundManager.PlayWinnerMusic();
         winnerText.text = "Winner Name";
+    }
+    public void BackToMenu()
+    {
+        menuScreen.SetActive(true);
+        soundManager.PlayLobbyMusic();
+        gameObject.SetActive(false);
     }
     public void NextQuestion()
     {
@@ -97,7 +104,14 @@ public class GameHandeler : MonoBehaviour
         questionScreen.SetActive(false);
         if (bothPlayersAnswered)
         {
-            counter.SetActive(true);
+            if (QuestionIndicator > 5)
+            {
+                EndGame();
+            }
+            else
+            {
+                StartCounter();
+            }
         }
         else
         {
@@ -144,7 +158,7 @@ public class GameHandeler : MonoBehaviour
             {
                 bothPlayersAnswered = true;
                 waitingForPlayerAnswer = false;
-                StartCounter();
+                NextQuestion();
             }
             else
             {

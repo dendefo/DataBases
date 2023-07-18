@@ -6,18 +6,26 @@ public class SoundManager : MonoBehaviour
 {
     [SerializeField] AudioSource musicSource;
     [SerializeField] AudioClip lobbyMusic;
+    [SerializeField] AudioClip winnerMusic;
     [SerializeField] AudioClip tenSecMusic_1;
     [SerializeField] AudioClip tenSecMusic_2;
     [SerializeField] AudioClip threeSecTimer;
 
     public void PlayLobbyMusic()
     {
+        musicSource.Stop();
         musicSource.clip = lobbyMusic;
         musicSource.Play();
     }
     public void PlayTimerMusic()
     {
+        musicSource.Stop();
         musicSource.PlayOneShot(threeSecTimer);
+    }
+    public void PlayWinnerMusic()
+    {
+        musicSource.Stop();
+        musicSource.PlayOneShot(winnerMusic);
     }
 
     public void PlayQuestionMusic()
