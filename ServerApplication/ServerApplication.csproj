@@ -201,7 +201,6 @@
     <Compile Include="Controllers\UpdatePlayerAnswerController.cs" />
     <Compile Include="Controllers\WaitForGameController.cs" />
     <Compile Include="Controllers\RegisterController.cs" />
-    <Compile Include="SQLString.cs" />
     <Compile Include="SQLManager.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />

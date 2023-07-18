@@ -21,8 +21,7 @@ public class GameHandeler : MonoBehaviour
     }
     private void Update()
     {
-            CheckForGame();
-            
+        CheckForGame();
     }
     void CheckForGame()
     {
