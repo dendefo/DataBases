@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.Remoting.Messaging;
 using MySql.Data.MySqlClient;
+using MySqlX.XDevAPI.Common;
 using Org.BouncyCastle.Crypto.Macs;
 
 namespace ServerApplication
@@ -77,6 +78,25 @@ namespace ServerApplication
             }
             Connection.Close();
             return AddPlayerToWaitList(id);
+        }
+        public int[] GetGameResults(int GameID)
+        {
+            int[] res = new int[2];
+            Connect();
+            var com = Connection.CreateCommand();
+            com.CommandText = $"SELECT * FROM games WHERE GameID = {GameID}";
+            var reader = com.ExecuteReader();
+            if (reader.Read())
+            {
+                res[0] = reader.GetInt32("WinnerPlayerID");
+                res[1] = reader.GetInt32("LoserPlayerID");
+            }
+            else
+            {
+                res[0] = 0;
+                res[1] = 0;
+            }
+            return res;
         }
         public bool CheckIfGameIsReady(int gameId)
         {
