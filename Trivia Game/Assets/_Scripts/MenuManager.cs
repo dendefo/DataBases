@@ -24,6 +24,7 @@ public class MenuManager : MonoBehaviour
     }
     public void BackToLogin()
     {
+        StartCoroutine(DissconnectFromServer(UserID));
         gameObject.SetActive(false);
         loginScreen.SetActive(true);
     }
@@ -36,6 +37,7 @@ public class MenuManager : MonoBehaviour
     }
     void DisconnectFromGame()
     {
+        StartCoroutine(DissconnectFromServer(UserID));
         gameObject.SetActive(false);
         loginScreen.SetActive(true);
         errorText.gameObject.SetActive(true);
@@ -73,6 +75,20 @@ public class MenuManager : MonoBehaviour
         {
             int gameID = int.Parse(www.downloadHandler.text);
             StartGame(gameID, userID);
+        }
+    }
+    IEnumerator DissconnectFromServer(int userID)
+    {
+        UnityWebRequest www = UnityWebRequest.Get("https://localhost:44339/api/Disconnect?PlayerID=" + userID);
+        yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            DisconnectFromGame();
+        }
+        else
+        {
+            Debug.Log("Dissconnected");
         }
     }
 }

@@ -68,6 +68,7 @@ public class GameHandeler : MonoBehaviour
     }
     public void DisconnectFromGame()
     {
+        StartCoroutine(DissconnectFromServer(UserID));
         gameObject.SetActive(false);
         loginScreen.SetActive(true);
         errorText.gameObject.SetActive(true);
@@ -94,7 +95,6 @@ public class GameHandeler : MonoBehaviour
         waitForPlayerScreen.SetActive(false);
         winnerScreen.SetActive(true);
         soundManager.PlayWinnerMusic();
-        winnerText.text = winnerUsername;
     }
     public void BackToMenu()
     {
@@ -198,7 +198,21 @@ public class GameHandeler : MonoBehaviour
         else
         {
             PlayerData playerData = JsonUtility.FromJson<PlayerData>(www.downloadHandler.text);
-            winnerUsername = playerData._name;
+            winnerText.text = playerData._name;
+        }
+    }
+    IEnumerator DissconnectFromServer(int userID)
+    {
+        UnityWebRequest www = UnityWebRequest.Get("https://localhost:44339/api/Disconnect?PlayerID=" + userID);
+        yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            DisconnectFromGame();
+        }
+        else
+        {
+            Debug.Log("Dissconnected");
         }
     }
 }
