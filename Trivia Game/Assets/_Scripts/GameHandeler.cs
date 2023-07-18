@@ -10,6 +10,8 @@ public class GameHandeler : MonoBehaviour
     public static int GameID;
     public static int currentQuestionID;
     public int QuestionIndicator = 1;
+    public int winnerUserID;
+    public string winnerUsername;
 
     [SerializeField] GameObject waitForPlayerScreen;
     [SerializeField] GameObject counter;
@@ -87,10 +89,12 @@ public class GameHandeler : MonoBehaviour
     public void EndGame()
     {
         questionScreen.SetActive(false);
+        StartCoroutine(GetGameResults(GameID));
+        StartCoroutine(GetUsername(winnerUserID));
         waitForPlayerScreen.SetActive(false);
         winnerScreen.SetActive(true);
         soundManager.PlayWinnerMusic();
-        winnerText.text = "Winner Name";
+        winnerText.text = winnerUsername;
     }
     public void BackToMenu()
     {
@@ -164,6 +168,37 @@ public class GameHandeler : MonoBehaviour
             {
                 bothPlayersAnswered = false;
             }
+        }
+    }
+    IEnumerator GetGameResults(int gameID)
+    {
+        UnityWebRequest www = UnityWebRequest.Get("https://localhost:44339/api/GameResults?GameID=" + gameID);
+        yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            DisconnectFromGame();
+        }
+        else
+        {
+            int[] gameResults = JsonUtility.FromJson<int[]>(www.downloadHandler.text);
+            winnerUserID = gameResults[0]; 
+        }
+    }
+    IEnumerator GetUsername(int userID)
+    {
+        UnityWebRequest www = UnityWebRequest.Get("https://localhost:44339/api/PlayerData?PlayerID=" + userID);
+        yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Debug.Log("Error getting username");
+            DisconnectFromGame();
+        }
+        else
+        {
+            PlayerData playerData = JsonUtility.FromJson<PlayerData>(www.downloadHandler.text);
+            winnerUsername = playerData._name;
         }
     }
 }

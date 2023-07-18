@@ -22,6 +22,11 @@ public class MenuManager : MonoBehaviour
     {
         StartCoroutine(CreateGame(UserID));
     }
+    public void BackToLogin()
+    {
+        gameObject.SetActive(false);
+        loginScreen.SetActive(true);
+    }
     void StartGame(int gameID, int userID)
     {
         GameHandeler.GameID = gameID;

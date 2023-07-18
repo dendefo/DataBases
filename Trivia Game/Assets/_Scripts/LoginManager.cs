@@ -30,6 +30,10 @@ public class LoginManager : MonoBehaviour
             StartCoroutine(Login(userNameInput.text));
         }
     }
+    public void ExitGame()
+    {
+        Application.Quit();
+    }
 
     IEnumerator Login(string username)
     {
@@ -47,6 +51,11 @@ public class LoginManager : MonoBehaviour
             if (userID == -1)
             {
                 newUserPopup.SetActive(true);
+            }
+            else if (userID == -2)
+            {
+                errorText.gameObject.SetActive(true);
+                errorText.text = "This user is already connected";
             }
             else
             {
@@ -99,6 +108,12 @@ public class LoginManager : MonoBehaviour
         {
             errorText.gameObject.SetActive(true);
             errorText.text = "You must enter a username first";
+            return false;
+        }
+        else if (username.Length > 8)
+        {
+            errorText.gameObject.SetActive(true);
+            errorText.text = "Username too long";
             return false;
         }
         else
