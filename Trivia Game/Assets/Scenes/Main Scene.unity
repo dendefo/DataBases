@@ -6000,7 +6000,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &152331807
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6099,12 +6099,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fb80037564ff884a81f2229e4ffbf32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  QuestionIndicator: 1
   waitForPlayerScreen: {fileID: 1194158221}
   counter: {fileID: 6856343019190476224}
   questionScreen: {fileID: 1510994455}
   winnerScreen: {fileID: 590688488}
   winnerText: {fileID: 2028176681}
   loginScreen: {fileID: 2121152942}
+  menuScreen: {fileID: 1199564753}
   errorText: {fileID: 516741426}
   questionHandeler: {fileID: 1510994457}
   soundManager: {fileID: 1039236103}
@@ -38502,8 +38504,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   musicSource: {fileID: 817912465}
   lobbyMusic: {fileID: 8300000, guid: 3f1a15abfd26d2549b7e1d40ef276234, type: 3}
+  winnerMusic: {fileID: 8300000, guid: d8dc089c70fd54d4c954f5151570adf8, type: 3}
   tenSecMusic_1: {fileID: 8300000, guid: 061ef00ea8f05fc438109a5e2b479aed, type: 3}
   tenSecMusic_2: {fileID: 8300000, guid: 9c3c0f0f634391940ad6f452bbd61532, type: 3}
+  threeSecTimer: {fileID: 8300000, guid: 94603b392e6917f48b1b9aaa3ac19d86, type: 3}
 --- !u!4 &1039236104
 Transform:
   m_ObjectHideFlags: 0
@@ -44667,7 +44671,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1510994456
 RectTransform:
   m_ObjectHideFlags: 0
@@ -44706,7 +44710,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameHandeler: {fileID: 152331811}
   timerText: {fileID: 424775862}
-  questionNumText: {fileID: 0}
+  questionNumText: {fileID: 1591732351}
   questionText: {fileID: 648344518}
   answers:
   - {fileID: 422395355}
@@ -51042,7 +51046,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1879904024}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 152331811}
+        m_TargetAssemblyTypeName: GameHandeler, Assembly-CSharp
+        m_MethodName: BackToMenu
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1879904024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -56669,6 +56685,7 @@ MonoBehaviour:
   errorText: {fileID: 516741426}
   newUserPopup: {fileID: 590062624}
   mainMenu: {fileID: 1199564753}
+  soundManager: {fileID: 1039236103}
 --- !u!1 &6856343019190476224
 GameObject:
   m_ObjectHideFlags: 0
@@ -56841,3 +56858,4 @@ MonoBehaviour:
   text: {fileID: 6856343019190476228}
   _number: 0
   gameHandeler: {fileID: 152331811}
+  soundManager: {fileID: 0}

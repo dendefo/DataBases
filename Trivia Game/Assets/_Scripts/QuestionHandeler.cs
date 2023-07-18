@@ -15,7 +15,6 @@ public class QuestionHandeler : MonoBehaviour
     [SerializeField] GameObject[] answers;
     [SerializeField] TMP_Text[] answersText;
     [SerializeField] GameObject[] currectAnswers;
-    int questionNum = 1;
     int CorrectAnswerID;
 
     [SerializeField] float questionTimer = 10f;
@@ -23,8 +22,8 @@ public class QuestionHandeler : MonoBehaviour
     private void OnEnable()
     {
         questionTimer = 10f;
-        questionNumText.text = questionNum.ToString();
-        questionNum++;
+        waitTimer = 3f;
+        questionNumText.text = "Question " + gameHandeler.QuestionIndicator.ToString();
     }
     private void Update()
     {
@@ -42,7 +41,6 @@ public class QuestionHandeler : MonoBehaviour
             }
             else
             {
-                waitTimer = 3f;
                 gameHandeler.NextQuestion();
             }
         }
@@ -89,6 +87,7 @@ public class QuestionHandeler : MonoBehaviour
     }
     public void DisplayQuestion(int gameID)
     {
+        gameHandeler.QuestionIndicator++;
         StartCoroutine(GetQuestion(gameID));
     }
     void ShowAnswer(int currectAnswerID)
@@ -125,20 +124,23 @@ public class QuestionHandeler : MonoBehaviour
             {
                 gameHandeler.EndGame();
             }
-            GameHandeler.currentQuestionID = currentQuestion.QuestionId;
-            questionText.text = currentQuestion.QuestionText;
-            answersText[0].text = currentQuestion.Answers[0];
-            answersText[1].text = currentQuestion.Answers[1];
-            answersText[2].text = currentQuestion.Answers[2];
-            answersText[3].text = currentQuestion.Answers[3];
-            CorrectAnswerID = currentQuestion.CorrectAnswerIndex;
+            else
+            {
+                GameHandeler.currentQuestionID = currentQuestion.QuestionId;
+                questionText.text = currentQuestion.QuestionText;
+                answersText[0].text = currentQuestion.Answers[0];
+                answersText[1].text = currentQuestion.Answers[1];
+                answersText[2].text = currentQuestion.Answers[2];
+                answersText[3].text = currentQuestion.Answers[3];
+                CorrectAnswerID = currentQuestion.CorrectAnswerIndex;
+            }
         }
     }
     IEnumerator SendPlayerAnswer(int gameID, int playerID, float answerTime, bool isAnswerRight)
     {
         UnityWebRequest www = UnityWebRequest.Get("https://localhost:44339/api/UpdatePlayerAnswer?GameID=" + gameID + 
             "&PlayerID=" + playerID + 
-            "&AnswerTime=" + answerTime + 
+            "&AnswerTime=" + answerTime.ToString().Replace(",", ".") + 
             "&IsAnswerRight=" + isAnswerRight);
         yield return www.SendWebRequest();
 

@@ -10,7 +10,12 @@ public class LoginManager : MonoBehaviour
     [SerializeField] TMP_Text errorText;
     [SerializeField] GameObject newUserPopup;
     [SerializeField] GameObject mainMenu;
+    [SerializeField] SoundManager soundManager;
 
+    private void OnEnable()
+    {
+        soundManager.PlayLobbyMusic();
+    }
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Return))
