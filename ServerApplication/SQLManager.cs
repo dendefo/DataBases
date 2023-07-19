@@ -33,24 +33,31 @@ namespace ServerApplication
         {
             Connect();
             var com = Connection.CreateCommand();
-            com.CommandText = $"SELECT * FROM Players WHERE PlayerName = '{login}' AND IsConnected=0"; //Add additional check for IS PLAYER CONNECTED
+            com.CommandText = $"SELECT * FROM Players WHERE PlayerName = '{login}'";
             var reader = com.ExecuteReader();
             int id = -1;
             if (reader.Read())
             {
                 id = reader.GetInt32("PlayerID");
-            }
-            Connection.Close();
-            if (id != -1)
-            {
+                bool isCon = reader.GetBoolean("IsConnected");
+                Connection.Close();
+                if (isCon)
+                {
+                    return -2; //Player is Connected
+                }
                 Connect();
                 com = Connection.CreateCommand();
                 com.CommandText = $"UPDATE players SET IsConnected = 1 WHERE (PlayerID = {id});";
                 com.ExecuteNonQuery();
                 Connection.Close();
-                return id;
-            } //MAKE PLAYER CONNECTED
-            else return -1;
+                return id; //Player ID
+
+            }
+            else
+            {
+                Connection.Close();
+                return -1; //Player does not exist
+            }
         }
         public int Register(string username)
         {
