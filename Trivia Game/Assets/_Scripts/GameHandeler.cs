@@ -91,7 +91,6 @@ public class GameHandeler : MonoBehaviour
     {
         questionScreen.SetActive(false);
         StartCoroutine(GetGameResults(GameID));
-        StartCoroutine(GetUsername(winnerUserID));
         waitForPlayerScreen.SetActive(false);
         winnerScreen.SetActive(true);
         soundManager.PlayWinnerMusic();
@@ -181,8 +180,9 @@ public class GameHandeler : MonoBehaviour
         }
         else
         {
-            int[] gameResults = JsonUtility.FromJson<int[]>(www.downloadHandler.text);
-            winnerUserID = gameResults[0]; 
+            GameData gameResults = JsonUtility.FromJson<GameData>(www.downloadHandler.text);
+            winnerUserID = gameResults.WinnerID;
+            StartCoroutine(GetUsername(winnerUserID));
         }
     }
     IEnumerator GetUsername(int userID)
@@ -215,5 +215,10 @@ public class GameHandeler : MonoBehaviour
             Debug.Log("Dissconnected");
         }
     }
+}
+public struct GameData
+{
+    public int WinnerID;
+    public int LoserID;
 }
 

@@ -15,6 +15,7 @@ public class LoginManager : MonoBehaviour
     private void OnEnable()
     {
         soundManager.PlayLobbyMusic();
+        newUserPopup.SetActive(false);
     }
     private void Update()
     {

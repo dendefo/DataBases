@@ -47,6 +47,10 @@ public class QuestionHandeler : MonoBehaviour
     }
     public void ReceivePlayerAnswer(int answer)
     {
+        foreach (var answerBox in answers)
+        {
+            answerBox.GetComponent<Button>().interactable = false;
+        }
         bool isAnswerCorrect = false;
         float answerTime = 10f - questionTimer;
         if (answer == CorrectAnswerID) isAnswerCorrect = true;
@@ -83,6 +87,10 @@ public class QuestionHandeler : MonoBehaviour
         foreach (var currectAnswer in currectAnswers)
         {
             currectAnswer.GetComponent<Image>().enabled = false;
+        }
+        foreach (var answerBox in answers)
+        {
+            answerBox.GetComponent<Button>().interactable = true;
         }
     }
     public void DisplayQuestion(int gameID)

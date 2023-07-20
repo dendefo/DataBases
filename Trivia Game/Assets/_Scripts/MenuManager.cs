@@ -9,6 +9,7 @@ public class MenuManager : MonoBehaviour
     public static int UserID;
     public static string UserName;
     [SerializeField] TMP_Text userNameText;
+    [SerializeField] TMP_Text games;
     [SerializeField] TMP_Text wins;
     [SerializeField] TMP_Text loses;
     [SerializeField] TMP_Text errorText;
@@ -59,6 +60,7 @@ public class MenuManager : MonoBehaviour
             userNameText.text = playerData._name.ToString();
             wins.text = playerData._wins.ToString();
             loses.text = playerData._losses.ToString();
+            games.text = playerData._amountOfGames.ToString();
         }
     }
     IEnumerator CreateGame(int userID)
