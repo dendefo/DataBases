@@ -16,11 +16,14 @@ public class QuestionHandeler : MonoBehaviour
     [SerializeField] TMP_Text[] answersText;
     [SerializeField] GameObject[] currectAnswers;
     int CorrectAnswerID;
+    bool receivedAnswerFromPlayer;
+    bool answerShowed;
 
     [SerializeField] float questionTimer = 10f;
     [SerializeField] float waitTimer = 3f;
     private void OnEnable()
     {
+        answerShowed = false;
         questionTimer = 10f;
         waitTimer = 3f;
         questionNumText.text = "Question " + gameHandeler.QuestionIndicator.ToString();
@@ -51,6 +54,7 @@ public class QuestionHandeler : MonoBehaviour
         {
             answerBox.GetComponent<Button>().interactable = false;
         }
+        receivedAnswerFromPlayer = true;
         bool isAnswerCorrect = false;
         float answerTime = 10f - questionTimer;
         if (answer == CorrectAnswerID) isAnswerCorrect = true;
@@ -74,6 +78,7 @@ public class QuestionHandeler : MonoBehaviour
     }
     public void ResetQuestion()
     {
+        receivedAnswerFromPlayer = false;
         foreach (var answer in answers)
         {
             var boxColor = answer.GetComponent<Image>().color;
@@ -100,20 +105,42 @@ public class QuestionHandeler : MonoBehaviour
     }
     void ShowAnswer(int currectAnswerID)
     {
-        switch (currectAnswerID)
+        if (!answerShowed)
         {
-            case 1:
-                currectAnswers[0].GetComponent<Image>().enabled = true;
-                break;
-            case 2:
-                currectAnswers[1].GetComponent<Image>().enabled = true;
-                break;
-            case 3:
-                currectAnswers[2].GetComponent<Image>().enabled = true;
-                break;
-            case 4:
-                currectAnswers[3].GetComponent<Image>().enabled = true;
-                break;
+            answerShowed = true;
+            if (!receivedAnswerFromPlayer)
+            {
+                foreach (var answerBox in answers)
+                {
+                    answerBox.GetComponent<Button>().interactable = false;
+                }
+                foreach (var answer in answers)
+                {
+                    var boxColor = answer.GetComponent<Image>().color;
+                    answer.GetComponent<Image>().color = new Color(boxColor.r, boxColor.g, boxColor.b, 0.5f);
+                }
+                foreach (var answerText in answersText)
+                {
+                    var textColor = answerText.color;
+                    answerText.color = new Color(textColor.r, textColor.g, textColor.b, 0.5f);
+                }
+                StartCoroutine(SendPlayerAnswer(GameHandeler.GameID, GameHandeler.UserID, 1f, false));
+            }
+            switch (currectAnswerID)
+            {
+                case 1:
+                    currectAnswers[0].GetComponent<Image>().enabled = true;
+                    break;
+                case 2:
+                    currectAnswers[1].GetComponent<Image>().enabled = true;
+                    break;
+                case 3:
+                    currectAnswers[2].GetComponent<Image>().enabled = true;
+                    break;
+                case 4:
+                    currectAnswers[3].GetComponent<Image>().enabled = true;
+                    break;
+            }
         }
     }
     IEnumerator GetQuestion(int gameID)

@@ -90,10 +90,13 @@ public class GameHandeler : MonoBehaviour
     public void EndGame()
     {
         questionScreen.SetActive(false);
+        counter.SetActive(false);
         StartCoroutine(GetGameResults(GameID));
         waitForPlayerScreen.SetActive(false);
         winnerScreen.SetActive(true);
         soundManager.PlayWinnerMusic();
+        secondPlayerConnected = false;
+        QuestionIndicator = 1;
     }
     public void BackToMenu()
     {
